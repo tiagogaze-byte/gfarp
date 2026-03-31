@@ -7,7 +7,8 @@
     { "source": "/projeto-detalhe.html", "destination": "/public/projeto-detalhe.html" },
     { "source": "/usuarios.html", "destination": "/public/usuarios.html" },
     { "source": "/relatorios.html", "destination": "/public/relatorios.html" },
-    { "source": "/js/(.*)", "destination": "/public/js/$1" },
+    { "source": "/js/:file", "destination": "/public/js/:file" },
+    { "source": "/styles/:file", "destination": "/public/styles/:file" },
     { "source": "/", "destination": "/public/login.html" }
   ]
 }
