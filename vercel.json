@@ -1,17 +1,13 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/public/$1" }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PATCH,DELETE,OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
-      ]
-    }
+    { "source": "/login.html", "destination": "/public/login.html" },
+    { "source": "/index.html", "destination": "/public/index.html" },
+    { "source": "/projetos.html", "destination": "/public/projetos.html" },
+    { "source": "/projeto-detalhe.html", "destination": "/public/projeto-detalhe.html" },
+    { "source": "/usuarios.html", "destination": "/public/usuarios.html" },
+    { "source": "/relatorios.html", "destination": "/public/relatorios.html" },
+    { "source": "/js/(.*)", "destination": "/public/js/$1" },
+    { "source": "/", "destination": "/public/login.html" }
   ]
 }
