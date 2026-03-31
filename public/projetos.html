@@ -2,110 +2,94 @@
 <html lang="pt-br">
 <head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Projetos — Gestão de Demandas</title>
+<title>Projetos — GFARP</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle;}</style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-<aside id="sidebar" class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50 border-r border-slate-100"></aside>
-<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-white/90 backdrop-blur-md z-40 border-b border-slate-100 flex items-center justify-between px-8">
-  <h1 class="text-lg font-black text-[#00193c]">Projetos</h1>
-  <button onclick="abrirModalNovoProjeto()" class="px-4 py-2 bg-[#00193c] text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:opacity-90">
+<body class="bg-slate-100 text-slate-800">
+<aside id="sidebar" class="h-screen w-60 fixed left-0 top-0 bg-slate-50 flex flex-col py-5 px-3 z-50 border-r border-slate-200"></aside>
+<header class="fixed top-0 right-0 w-[calc(100%-15rem)] h-14 bg-white z-40 border-b border-slate-200 flex items-center justify-between px-6">
+  <h1 class="font-black text-[#00193c]">Projetos</h1>
+  <button onclick="abrirModalNovoProjeto()" class="px-4 py-1.5 bg-[#00193c] text-white rounded-lg text-xs font-bold flex items-center gap-1.5 hover:opacity-90">
     <span class="material-symbols-outlined text-sm">add</span>Novo Projeto
   </button>
 </header>
-<main class="ml-64 pt-24 pb-12 px-8 min-h-screen">
+<main class="ml-60 pt-20 pb-10 px-6 min-h-screen">
   <!-- Filtros -->
-  <div class="bg-white rounded-xl border border-slate-100 p-5 mb-6 flex flex-wrap gap-4 items-end">
-    <div class="flex-1 min-w-[160px]">
-      <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Status</label>
-      <select id="f-status" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm focus:ring-2 focus:ring-[#00193c]/20">
-        <option value="">Todos</option>
-        <option value="EM_ANALISE">Em Análise</option>
-        <option value="GFCAP">GFCAP</option>
-        <option value="OSC">OSC</option>
-        <option value="FINALIZADO">Finalizado</option>
-      </select>
-    </div>
-    <div class="flex-1 min-w-[160px]">
-      <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tipo</label>
-      <select id="f-tipo" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm focus:ring-2 focus:ring-[#00193c]/20">
-        <option value="">Todos</option>
-        <option>PLANO DE TRABALHO</option>
-        <option>PRESTAÇÃO DE CONTAS</option>
-        <option>RELATÓRIO PARCIAL</option>
-        <option>ADITIVO</option>
-      </select>
-    </div>
-    <div class="flex-1 min-w-[180px]">
-      <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Buscar OSC</label>
-      <input id="f-busca" type="text" placeholder="Nome da OSC..." class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm focus:ring-2 focus:ring-[#00193c]/20"/>
-    </div>
-    <div class="flex gap-2">
-      <button onclick="filtrar()" class="px-5 py-2 bg-[#00193c] text-white rounded-lg text-sm font-bold hover:opacity-90">Filtrar</button>
-      <button onclick="limparFiltros()" class="px-5 py-2 bg-slate-100 rounded-lg text-sm font-bold hover:bg-slate-200">Limpar</button>
+  <div class="bg-white rounded-xl border border-slate-200 p-4 mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status</label>
+      <select id="f-status" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm">
+        <option value="">Todos</option><option value="EM_ANALISE">Em Análise</option>
+        <option value="GFCAP">GFCAP</option><option value="OSC">OSC</option><option value="FINALIZADO">Finalizado</option>
+      </select></div>
+    <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tipo</label>
+      <select id="f-tipo" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm">
+        <option value="">Todos</option><option>PLANO DE TRABALHO</option><option>PRESTAÇÃO DE CONTAS</option>
+        <option>RELATÓRIO PARCIAL</option><option>ADITIVO</option>
+      </select></div>
+    <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">OSC</label>
+      <input id="f-busca" type="text" placeholder="Nome da OSC..." class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+    <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Responsável</label>
+      <input id="f-responsavel" type="text" placeholder="Gestor ou analista..." class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+    <div class="col-span-2 md:col-span-4 flex gap-2 justify-end">
+      <button onclick="filtrar()" class="px-5 py-2 bg-[#00193c] text-white rounded-lg text-xs font-bold hover:opacity-90">Filtrar</button>
+      <button onclick="limpar()" class="px-5 py-2 bg-slate-100 rounded-lg text-xs font-bold hover:bg-slate-200">Limpar</button>
     </div>
   </div>
   <!-- Tabela -->
-  <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <table class="w-full text-left">
-      <thead class="bg-slate-50">
+      <thead class="bg-slate-50 border-b border-slate-100">
         <tr>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Código</th>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">OSC</th>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Tipo</th>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Status</th>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Gestor</th>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Analista</th>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400 text-center">Prazo</th>
-          <th class="px-6 py-3"></th>
+          <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Código</th>
+          <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">OSC</th>
+          <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Tipo</th>
+          <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+          <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Gestor</th>
+          <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Analista</th>
+          <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Prazo</th>
+          <th class="px-5 py-2.5"></th>
         </tr>
       </thead>
       <tbody id="tbody" class="divide-y divide-slate-50">
-        <tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">Carregando...</td></tr>
+        <tr><td colspan="8" class="px-5 py-10 text-center text-slate-400 text-sm">Carregando...</td></tr>
       </tbody>
     </table>
-    <div class="px-6 py-3 border-t border-slate-50 text-xs text-slate-400" id="count-text"></div>
+    <div class="px-5 py-2 border-t border-slate-100 text-xs text-slate-400" id="count"></div>
   </div>
 </main>
 
 <!-- Modal Novo Projeto -->
-<div id="modal-projeto" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-  <div class="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl">
-    <h2 class="text-xl font-bold text-[#00193c] mb-6">Novo Projeto</h2>
-    <form id="form-projeto" class="space-y-4">
-      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tipo de Demanda</label>
-        <select name="tipo_demanda" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm">
+<div id="modal-projeto" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl">
+    <h2 class="text-lg font-bold text-[#00193c] mb-5">Novo Projeto</h2>
+    <form id="form-projeto" class="space-y-3">
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tipo de Demanda</label>
+        <select name="tipo_demanda" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm">
           <option value="">— Selecione —</option>
           <option>PLANO DE TRABALHO</option><option>PRESTAÇÃO DE CONTAS</option>
           <option>RELATÓRIO PARCIAL</option><option>ADITIVO</option>
-        </select>
+        </select></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nome da OSC</label>
+        <input name="osc_nome" type="text" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Data Recebimento</label>
+          <input name="data_recebimento" type="date" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+        <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Prazo (dias úteis)</label>
+          <input name="prazo_dias" type="number" value="7" min="1" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
       </div>
-      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Nome da OSC</label>
-        <input name="osc_nome" type="text" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm" placeholder="Nome completo"/>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Gestor</label>
+          <select id="mp-gestor" name="gestor_id" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"></select></div>
+        <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Analista</label>
+          <select id="mp-analista" name="analista_id" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"></select></div>
       </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Data Recebimento</label>
-          <input name="data_recebimento" type="date" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"/>
-        </div>
-        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Prazo (dias úteis)</label>
-          <input name="prazo_dias" type="number" value="7" min="1" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"/>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Gestor</label>
-          <select id="mp-opts-gestor" name="gestor_id" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"></select>
-        </div>
-        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Analista</label>
-          <select id="mp-opts-analista" name="analista_id" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"></select>
-        </div>
-      </div>
-      <p id="mp-erro" class="text-red-500 text-sm"></p>
-      <div class="flex gap-3 pt-2">
-        <button type="button" onclick="fecharModalNovoProjeto()" class="flex-1 py-3 rounded-xl border border-slate-200 text-sm font-bold">Cancelar</button>
-        <button type="submit" class="flex-1 py-3 rounded-xl bg-[#00193c] text-white text-sm font-bold hover:opacity-90">Registrar</button>
+      <p id="mp-erro" class="text-red-500 text-xs"></p>
+      <div class="flex gap-3 pt-1">
+        <button type="button" onclick="fecharModalNovoProjeto()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-bold">Cancelar</button>
+        <button type="submit" class="flex-1 py-2.5 rounded-xl bg-[#00193c] text-white text-sm font-bold hover:opacity-90">Registrar</button>
       </div>
     </form>
   </div>
@@ -113,79 +97,48 @@
 
 <script src="/js/api.js"></script>
 <script>
-let todosProj = [];
-
 async function init() {
-  const u = await protegerRota();
-  if (!u) return;
-  montarSidebar(u, 'proj');
-  await carregar();
-}
-
-async function carregar(filtros={}) {
-  const tbody = document.getElementById('tbody');
-  tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">Carregando...</td></tr>';
-  try {
-    todosProj = await API.listarProjetos(filtros);
-    renderTabela(todosProj);
-  } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-8 text-center text-red-500">${e.message}</td></tr>`;
-  }
-}
-
-function renderTabela(lista) {
-  const tbody = document.getElementById('tbody');
-  const count = document.getElementById('count-text');
-  if (!lista.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">Nenhum projeto encontrado.</td></tr>';
-    count.textContent = '';
-    return;
-  }
-  tbody.innerHTML = lista.map(p => {
-    const cor = API.semaforoCor(p.semaforo);
-    const label = API.semaforoLabel(p.semaforo);
-    return `<tr class="hover:bg-slate-50 cursor-pointer" onclick="window.location='/projeto-detalhe.html?id=${p.id}'">
-      <td class="px-6 py-4 font-mono text-xs text-slate-400">${p.codigo}</td>
-      <td class="px-6 py-4 font-semibold text-sm text-[#00193c]">${p.osc_nome}</td>
-      <td class="px-6 py-4 text-xs text-slate-500">${p.tipo_demanda}</td>
-      <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">${API.statusLabel(p.status)}</span></td>
-      <td class="px-6 py-4 text-sm">${p.gestor_nome||'—'}</td>
-      <td class="px-6 py-4 text-sm">${p.analista_nome||'—'}</td>
-      <td class="px-6 py-4 text-center"><span class="text-xs font-bold px-2 py-1 rounded-full" style="background:${cor}20;color:${cor}">${label}</span></td>
-      <td class="px-6 py-4 text-right"><span class="material-symbols-outlined text-slate-400">arrow_forward</span></td>
-    </tr>`;
-  }).join('');
-  count.textContent = `${lista.length} projeto(s)`;
-}
-
-function filtrar() {
-  const f = {};
-  const s = document.getElementById('f-status').value;
-  const t = document.getElementById('f-tipo').value;
-  const b = document.getElementById('f-busca').value;
-  if (s) f.status = s;
-  if (t) f.tipo = t;
-  if (b) f.busca = b;
-  carregar(f);
-}
-
-function limparFiltros() {
-  document.getElementById('f-status').value='';
-  document.getElementById('f-tipo').value='';
-  document.getElementById('f-busca').value='';
+  const u = await protegerRota(); if(!u) return;
+  montarSidebar(u,'proj');
   carregar();
 }
-
-document.getElementById('form-projeto').addEventListener('submit', async e => {
-  e.preventDefault();
-  const dados = Object.fromEntries(new FormData(e.target).entries());
+async function carregar(f={}) {
+  const tbody=document.getElementById('tbody');
   try {
-    await API.criarProjeto(dados);
-    fecharModalNovoProjeto();
-    carregar();
-  } catch(err) { document.getElementById('mp-erro').textContent = err.message; }
+    const lista = await API.listarProjetos(f);
+    if(!lista.length){tbody.innerHTML='<tr><td colspan="8" class="px-5 py-10 text-center text-slate-400 text-sm">Nenhum projeto.</td></tr>';document.getElementById('count').textContent='';return;}
+    tbody.innerHTML=lista.map(p=>{
+      const cor=API.semaforoCor(p.semaforo);
+      return `<tr class="hover:bg-slate-50 cursor-pointer" onclick="window.location='/projeto-detalhe.html?id=${p.id}'">
+        <td class="px-5 py-3 font-mono text-xs text-slate-400">${p.codigo}</td>
+        <td class="px-5 py-3 font-bold text-sm text-[#00193c]">${p.osc_nome}</td>
+        <td class="px-5 py-3 text-xs text-slate-500">${p.tipo_demanda}</td>
+        <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100">${API.statusLabel(p.status)}</span></td>
+        <td class="px-5 py-3 text-sm">${p.gestor_nome||'—'}</td>
+        <td class="px-5 py-3 text-sm">${p.analista_nome||'—'}</td>
+        <td class="px-5 py-3 text-center"><span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:${cor}15;color:${cor}">${API.semaforoLabel(p.semaforo)}</span></td>
+        <td class="px-5 py-3 text-right"><span class="material-symbols-outlined text-slate-300 text-sm">arrow_forward</span></td>
+      </tr>`;
+    }).join('');
+    document.getElementById('count').textContent=lista.length+' projeto(s)';
+  } catch(e){tbody.innerHTML=`<tr><td colspan="8" class="px-5 py-8 text-center text-red-500 text-sm">${e.message}</td></tr>`;}
+}
+function filtrar(){
+  const f={};
+  const s=document.getElementById('f-status').value;
+  const t=document.getElementById('f-tipo').value;
+  const b=document.getElementById('f-busca').value;
+  const r=document.getElementById('f-responsavel').value;
+  if(s)f.status=s; if(t)f.tipo=t; if(b)f.busca=b; if(r)f.responsavel=r;
+  carregar(f);
+}
+function limpar(){['f-status','f-tipo','f-busca','f-responsavel'].forEach(i=>document.getElementById(i).value='');carregar();}
+document.getElementById('form-projeto').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const d=Object.fromEntries(new FormData(e.target).entries());
+  try{await API.criarProjeto(d);fecharModalNovoProjeto();carregar();}
+  catch(err){document.getElementById('mp-erro').textContent=err.message;}
 });
-
 init();
 </script>
 </body></html>
