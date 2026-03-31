@@ -1,308 +1,172 @@
 <!DOCTYPE html>
-
-<html class="light" lang="pt-br"><head>
+<html class="light" lang="pt-br">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Executive Architect - Dashboard</title>
+<title>Dashboard — Gestão de Demandas</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              colors: {
-                "surface-variant": "#e1e3e4",
-                "primary-fixed-dim": "#abc7ff",
-                "on-secondary-container": "#4a6774",
-                "on-secondary-fixed": "#001f2a",
-                "on-error": "#ffffff",
-                "on-primary": "#ffffff",
-                "on-primary-fixed-variant": "#24467c",
-                "error": "#ba1a1a",
-                "on-primary-container": "#7796d1",
-                "on-primary-fixed": "#001b3f",
-                "surface": "#f8f9fa",
-                "tertiary-fixed": "#83fc8e",
-                "on-tertiary-fixed": "#002106",
-                "on-tertiary": "#ffffff",
-                "surface-container-high": "#e7e8e9",
-                "secondary": "#466270",
-                "surface-container-lowest": "#ffffff",
-                "inverse-on-surface": "#f0f1f2",
-                "on-surface-variant": "#43474f",
-                "primary": "#00193c",
-                "on-error-container": "#93000a",
-                "error-container": "#ffdad6",
-                "tertiary-container": "#00370e",
-                "surface-tint": "#3e5e95",
-                "surface-container-low": "#f3f4f5",
-                "secondary-fixed-dim": "#adcbda",
-                "on-background": "#191c1d",
-                "inverse-primary": "#abc7ff",
-                "on-surface": "#191c1d",
-                "primary-fixed": "#d7e2ff",
-                "tertiary-fixed-dim": "#66df75",
-                "on-secondary": "#ffffff",
-                "inverse-surface": "#2e3132",
-                "on-tertiary-container": "#2eac49",
-                "surface-container": "#edeeef",
-                "surface-bright": "#f8f9fa",
-                "secondary-fixed": "#c9e7f7",
-                "on-tertiary-fixed-variant": "#00531a",
-                "outline-variant": "#c4c6d1",
-                "primary-container": "#002d62",
-                "surface-dim": "#d9dadb",
-                "tertiary": "#001f05",
-                "background": "#f8f9fa",
-                "surface-container-highest": "#e1e3e4",
-                "outline": "#747781",
-                "on-secondary-fixed-variant": "#2e4b57",
-                "secondary-container": "#c6e4f4"
-              },
-              fontFamily: {
-                "headline": ["Inter"],
-                "body": ["Inter"],
-                "label": ["Inter"]
-              },
-              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-            },
-          },
-        }
-    </script>
+tailwind.config = {
+  darkMode: "class",
+  theme: { extend: {
+    colors: {
+      "surface-variant":"#e1e3e4","primary-fixed-dim":"#abc7ff","on-secondary-container":"#4a6774",
+      "on-error":"#ffffff","on-primary":"#ffffff","error":"#ba1a1a","on-primary-container":"#7796d1",
+      "surface":"#f8f9fa","tertiary-fixed":"#83fc8e","surface-container-high":"#e7e8e9",
+      "secondary":"#466270","surface-container-lowest":"#ffffff","on-surface-variant":"#43474f",
+      "primary":"#00193c","error-container":"#ffdad6","surface-container-low":"#f3f4f5",
+      "on-background":"#191c1d","on-surface":"#191c1d","primary-fixed":"#d7e2ff",
+      "on-secondary":"#ffffff","on-tertiary-container":"#2eac49","surface-container":"#edeeef",
+      "secondary-fixed":"#c9e7f7","outline-variant":"#c4c6d1","primary-container":"#002d62",
+      "surface-dim":"#d9dadb","background":"#f8f9fa","outline":"#747781","secondary-container":"#c6e4f4"
+    },
+    fontFamily: { headline:["Inter"], body:["Inter"], label:["Inter"] },
+    borderRadius: { DEFAULT:"0.125rem", lg:"0.5rem", xl:"0.75rem", full:"9999px" }
+  }}
+}
+</script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-        .bg-primary-gradient {
-            background: linear-gradient(135deg, #00193c 0%, #002d62 100%);
-        }
-        .glass-panel {
-            background: rgba(248, 249, 250, 0.8);
-            backdrop-filter: blur(12px);
-        }
-        @keyframes pulse-shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        .skeleton {
-            background: linear-gradient(90deg, #edeeef 25%, #f3f4f5 50%, #edeeef 75%);
-            background-size: 200% 100%;
-            animation: pulse-shimmer 1.5s infinite linear;
-        }
-    </style>
+.material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; vertical-align:middle; }
+.bg-primary-gradient { background: linear-gradient(135deg,#00193c 0%,#002d62 100%); }
+@keyframes pulse-shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+.skeleton { background:linear-gradient(90deg,#edeeef 25%,#f3f4f5 50%,#edeeef 75%); background-size:200% 100%; animation:pulse-shimmer 1.5s infinite linear; }
+</style>
 </head>
 <body class="bg-surface font-body text-on-surface antialiased">
-<!-- SideNavBar -->
-<aside class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-slate-50 dark:bg-slate-900 flex flex-col py-6 px-4 z-50">
-<div class="mb-10 px-2">
-<span class="text-xl font-black tracking-tighter text-[#00193c] dark:text-slate-100">Executive Architect</span>
-<p class="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1 opacity-70">Demand Management</p>
-</div>
-<nav class="flex-1 space-y-1">
-<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 text-[#00193c] dark:text-white shadow-sm font-bold border-r-4 border-[#00193c] rounded-sm transition-transform active:scale-[0.98]" href="#">
-<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-<span class="font-inter text-sm font-medium tracking-tight">Dashboard</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#00193c] dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
-<span class="font-inter text-sm font-medium tracking-tight">Projetos</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#00193c] dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="group">group</span>
-<span class="font-inter text-sm font-medium tracking-tight">Usuários</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#00193c] dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
-<span class="font-inter text-sm font-medium tracking-tight">Relatórios</span>
-</a>
-</nav>
-<div class="mt-auto pt-6 border-t border-slate-100 dark:border-slate-800">
-<button class="w-full bg-primary-gradient text-white py-3 rounded-lg font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
-                Novo Projeto
-            </button>
-<div class="flex items-center gap-3 mt-8 px-2">
-<img alt="User profile photo" class="w-10 h-10 rounded-full bg-surface-container-high" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7tNTmy3QN8yUa8X7fYY6rO_PKaOlSK2TtWj18D9LMzdPJppbSuJEyU2Tzzic6RDnHtfq8TUWik_59vXZy6l8UctfgRXfEjEl_zKDu4p_NE3nuxtJ3i8DHfgalq259tR7pnD2rkTt03XqSO95YIE2uvOC9zij2M5WqTo8rrfce5LTTUS47OM1ZUVHdye2-_pOIhlDvvvrIDWezU-k2FBQvrT9vTFduPgfOUqkPe_bIJt_jw4CE3hzLPoeqGIhhl1v_FJo5rR_AL4gn"/>
-<div class="overflow-hidden">
-<p class="text-sm font-bold text-primary truncate">Executive Architect</p>
-<p class="text-xs text-on-surface-variant truncate">Demand Management</p>
-</div>
-</div>
-</div>
+
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50">
+  <div class="mb-10 px-2">
+    <span class="text-xl font-black tracking-tighter text-[#00193c]">Gestão de Demandas</span>
+    <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1 opacity-70">Sistema GFARP</p>
+  </div>
+  <nav class="flex-1 space-y-1">
+    <a href="/index.html" class="flex items-center gap-3 px-4 py-3 bg-white text-[#00193c] shadow-sm font-bold border-r-4 border-[#00193c] rounded-sm">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span class="text-sm font-medium">Dashboard</span>
+    </a>
+    <a href="/projetos.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#00193c] hover:bg-slate-100 transition-colors">
+      <span class="material-symbols-outlined">assignment</span>
+      <span class="text-sm font-medium">Projetos</span>
+    </a>
+    <a href="/usuarios.html" id="link-usuarios" class="hidden items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#00193c] hover:bg-slate-100 transition-colors">
+      <span class="material-symbols-outlined">group</span>
+      <span class="text-sm font-medium">Usuários</span>
+    </a>
+    <a href="/relatorios.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#00193c] hover:bg-slate-100 transition-colors">
+      <span class="material-symbols-outlined">assessment</span>
+      <span class="text-sm font-medium">Relatórios</span>
+    </a>
+  </nav>
+  <div class="mt-auto pt-6 border-t border-slate-100">
+    <button onclick="API.logout()" class="w-full bg-primary-gradient text-white py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90">
+      <span class="material-symbols-outlined text-sm">logout</span>Sair
+    </button>
+    <div class="flex items-center gap-3 mt-6 px-2">
+      <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm" id="avatar-inicial">?</div>
+      <div class="overflow-hidden">
+        <p class="text-sm font-bold text-primary truncate" id="sidebar-nome">...</p>
+        <p class="text-xs text-on-surface-variant" id="sidebar-papel">...</p>
+      </div>
+    </div>
+  </div>
 </aside>
-<!-- TopNavBar -->
-<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 flex justify-between items-center h-16 px-8 transition-all duration-300 ease-in-out">
-<div class="flex items-center gap-4 flex-1">
-<div class="relative w-full max-w-md">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg" data-icon="search">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Buscar projetos ou demandas..." type="text"/>
-</div>
-</div>
-<div class="flex items-center gap-6">
-<div class="flex items-center gap-4 border-r border-slate-100 pr-6">
-<button class="text-slate-500 hover:text-[#002d62] transition-colors relative">
-<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
-</button>
-<button class="text-slate-500 hover:text-[#002d62] transition-colors">
-<span class="material-symbols-outlined" data-icon="settings">settings</span>
-</button>
-</div>
-<div class="flex items-center gap-4">
-<span class="text-sm font-semibold text-[#00193c]">Demand System</span>
-<button class="text-xs font-bold text-error/80 hover:text-error transition-colors uppercase tracking-widest">Sair</button>
-</div>
-</div>
+
+<!-- TopBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 flex justify-between items-center h-16 px-8">
+  <div class="relative w-full max-w-md">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+    <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20" placeholder="Buscar projetos ou demandas..." type="text"/>
+  </div>
+  <div class="flex items-center gap-4">
+    <button onclick="API.exportarCSV()" class="px-4 py-2 bg-surface-container-high rounded-lg text-sm font-bold text-primary hover:bg-surface-variant">Exportar Dados</button>
+    <button onclick="init()" class="px-4 py-2 bg-primary-gradient text-white rounded-lg text-sm font-bold">Atualizar Vista</button>
+  </div>
 </header>
-<!-- Main Content -->
+
+<!-- Main -->
 <main class="ml-64 pt-24 pb-12 px-10 min-h-screen">
-<!-- Welcome Section -->
-<header class="mb-10 flex justify-between items-end">
-<div>
-<h1 class="text-[2.25rem] font-black tracking-tight text-primary leading-tight">Dashboard Central</h1>
-<p class="text-on-surface-variant mt-2 font-medium">Bem-vindo de volta. Aqui está o resumo das suas operações hoje.</p>
-</div>
-<div class="flex gap-2">
-<button class="px-4 py-2 bg-surface-container-high rounded-lg text-sm font-bold text-primary hover:bg-surface-container-highest transition-colors">Exportar Dados</button>
-<button class="px-4 py-2 bg-primary-gradient text-white rounded-lg text-sm font-bold shadow-sm hover:opacity-90 transition-opacity" onclick="refreshDashboard()">Atualizar Vista</button>
-</div>
-</header>
-<!-- KPI Bento Grid -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10" id="kpi-container">
-<!-- Total Projects Skeleton -->
-<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.04)]" id="card-total">
-<div class="flex justify-between items-start mb-4">
-<div class="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-2xl" data-icon="folder_managed">folder_managed</span>
-</div>
-<div class="skeleton w-16 h-4 rounded"></div>
-</div>
-<p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total de Projetos</p>
-<div class="skeleton w-12 h-9 rounded mb-4"></div>
-<div class="h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-primary w-0 transition-all duration-1000" id="progress-total"></div>
-</div>
-</div>
-<!-- Projects Open Skeleton -->
-<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.04)]" id="card-open">
-<div class="flex justify-between items-start mb-4">
-<div class="w-12 h-12 bg-tertiary-fixed/20 rounded-full flex items-center justify-center text-on-tertiary-container">
-<span class="material-symbols-outlined text-2xl" data-icon="pending_actions">pending_actions</span>
-</div>
-<div class="skeleton w-12 h-4 rounded"></div>
-</div>
-<p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Projetos em Aberto</p>
-<div class="skeleton w-12 h-9 rounded mb-4"></div>
-<div class="h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-on-tertiary-container w-0 transition-all duration-1000" id="progress-open"></div>
-</div>
-</div>
-<!-- Projects Delayed Skeleton -->
-<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.04)] border-l-4 border-error/20" id="card-delayed">
-<div class="flex justify-between items-start mb-4">
-<div class="w-12 h-12 bg-error-container rounded-full flex items-center justify-center text-error">
-<span class="material-symbols-outlined text-2xl" data-icon="warning">warning</span>
-</div>
-<div class="skeleton w-14 h-4 rounded"></div>
-</div>
-<p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Projetos Atrasados</p>
-<div class="skeleton w-12 h-9 rounded mb-4"></div>
-<div class="h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-error w-0 transition-all duration-1000" id="progress-delayed"></div>
-</div>
-</div>
-</div>
-<!-- Demands Section -->
-<section class="bg-surface-container-lowest rounded-xl shadow-[0_8px_48px_rgba(25,28,29,0.03)] overflow-hidden">
-<div class="p-8 flex justify-between items-center bg-surface-dim/20">
-<div class="flex items-center gap-3">
-<div class="w-1.5 h-6 bg-primary rounded-full"></div>
-<h2 class="text-lg font-bold text-primary">Minhas Demandas Ativas</h2>
-</div>
-<button class="text-sm font-bold text-primary hover:underline transition-all">Ver todas as demandas</button>
-</div>
-<div class="overflow-x-auto min-h-[300px]">
-<table class="w-full text-left border-collapse">
-<thead>
-<tr class="bg-surface-dim/40 border-b border-outline-variant/10">
-<th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Identificador</th>
-<th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Título da Demanda</th>
-<th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Status</th>
-<th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Prazo</th>
-<th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant text-right">Ações</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-surface-container-low" id="projects-table-body">
-<!-- Loading State -->
-<tr>
-<td class="px-8 py-20 text-center" colspan="5">
-<div class="flex flex-col items-center gap-4">
-<div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-<p class="text-sm font-medium text-on-surface-variant">Carregando demandas...</p>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="p-6 border-t border-surface-container-low flex items-center justify-between text-xs font-bold text-on-surface-variant uppercase tracking-widest" id="pagination-footer">
-<span id="items-count-text">Exibindo ...</span>
-<div class="flex gap-2">
-<button class="px-3 py-1 border border-outline-variant/30 rounded hover:bg-surface-container-low transition-colors">Anterior</button>
-<button class="px-3 py-1 border border-outline-variant/30 rounded hover:bg-surface-container-low transition-colors">Próximo</button>
-</div>
-</div>
-</section>
-<!-- Dynamic Status Section -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
-<div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/5">
-<h3 class="text-primary font-black text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary" data-icon="monitoring">monitoring</span>
-                    Desempenho da Equipe
-                </h3>
-<div class="space-y-6">
-<div>
-<div class="flex justify-between mb-2">
-<span class="text-xs font-bold text-on-surface-variant uppercase">Arquitetura</span>
-<span class="text-xs font-bold text-primary">92%</span>
-</div>
-<div class="h-2 w-full bg-white rounded-full overflow-hidden">
-<div class="h-full bg-primary-gradient w-[92%]"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-2">
-<span class="text-xs font-bold text-on-surface-variant uppercase">Desenvolvimento</span>
-<span class="text-xs font-bold text-on-tertiary-container">78%</span>
-</div>
-<div class="h-2 w-full bg-white rounded-full overflow-hidden">
-<div class="h-full bg-on-tertiary-container w-[78%]"></div>
-</div>
-</div>
-<div>
-<div class="flex justify-between mb-2">
-<span class="text-xs font-bold text-on-surface-variant uppercase">Infraestrutura</span>
-<span class="text-xs font-bold text-on-secondary-container">65%</span>
-</div>
-<div class="h-2 w-full bg-white rounded-full overflow-hidden">
-<div class="h-full bg-secondary w-[65%]"></div>
-</div>
-</div>
-</div>
-</div>
-<div class="relative rounded-xl overflow-hidden min-h-[250px] group shadow-xl">
-<img alt="Modern corporate architectural workspace" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQg7YVOX6xQtpcqBn5WQa9Q2Fiw94kFcZtCA4MZmnedbVFYHIQZqGHqFAREDRZ4IBfNDLYZOSHcC0ifruqaXvf-KITTarvpADTQ-OMrR6WGtJwW5naufB7XvvhmdCeYdMDY5Q90jwCvWZ2R7DsKomk_aydNjBhUii3W_0g1IRnTwfS8wwAa5YQ8x13AHSx2SrW8t2QndTwO9vQwMm7jCcLJvuO255z_cZ-t99O6eFMUiQIaV5kk-UNseRVn6lIbdSwHUnfjVpf0RpC"/>
-<div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent p-8 flex flex-col justify-end">
-<span class="text-[10px] font-black uppercase tracking-[0.3em] text-white/70 mb-2">Visão Estratégica</span>
-<h4 class="text-xl font-bold text-white mb-4 leading-tight">Projetando o futuro da gestão de demandas corporativas.</h4>
-<button class="self-start text-xs font-bold bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-white hover:text-primary transition-all">Explorar Visão 2025</button>
-</div>
-</div>
-</div>
+  <header class="mb-10">
+    <h1 class="text-[2.25rem] font-black tracking-tight text-primary leading-tight">Dashboard Central</h1>
+    <p class="text-on-surface-variant mt-2 font-medium">Bem-vindo de volta. Aqui está o resumo das suas operações hoje.</p>
+  </header>
+
+  <!-- KPIs -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.04)]" id="card-total">
+      <div class="flex justify-between items-start mb-4">
+        <div class="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined text-2xl">folder_managed</span>
+        </div>
+        <span class="text-[10px] font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded" id="badge-total">...</span>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total de Projetos</p>
+      <h3 class="text-3xl font-black text-primary mb-4" id="val-total">--</h3>
+      <div class="h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
+        <div class="h-full bg-primary w-0 transition-all duration-1000" id="progress-total"></div>
+      </div>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.04)]" id="card-open">
+      <div class="flex justify-between items-start mb-4">
+        <div class="w-12 h-12 bg-tertiary-fixed/20 rounded-full flex items-center justify-center text-on-tertiary-container">
+          <span class="material-symbols-outlined text-2xl">pending_actions</span>
+        </div>
+        <span class="text-[10px] font-bold text-on-tertiary-container bg-tertiary-fixed/30 px-2 py-1 rounded" id="badge-open">Ativos</span>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Projetos em Aberto</p>
+      <h3 class="text-3xl font-black text-primary mb-4" id="val-open">--</h3>
+      <div class="h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
+        <div class="h-full bg-on-tertiary-container w-0 transition-all duration-1000" id="progress-open"></div>
+      </div>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.04)] border-l-4 border-error/20" id="card-delayed">
+      <div class="flex justify-between items-start mb-4">
+        <div class="w-12 h-12 bg-error-container rounded-full flex items-center justify-center text-error">
+          <span class="material-symbols-outlined text-2xl">warning</span>
+        </div>
+        <span class="text-[10px] font-bold text-error bg-error-container px-2 py-1 rounded" id="badge-delayed">Urgente</span>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Projetos Atrasados</p>
+      <h3 class="text-3xl font-black text-error mb-4" id="val-delayed">--</h3>
+      <div class="h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
+        <div class="h-full bg-error w-0 transition-all duration-1000" id="progress-delayed"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela de demandas -->
+  <section class="bg-surface-container-lowest rounded-xl shadow-[0_8px_48px_rgba(25,28,29,0.03)] overflow-hidden">
+    <div class="p-8 flex justify-between items-center bg-surface-dim/20">
+      <div class="flex items-center gap-3">
+        <div class="w-1.5 h-6 bg-primary rounded-full"></div>
+        <h2 class="text-lg font-bold text-primary">Minhas Demandas Ativas</h2>
+      </div>
+      <a href="/projetos.html" class="text-sm font-bold text-primary hover:underline">Ver todas as demandas</a>
+    </div>
+    <div class="overflow-x-auto min-h-[200px]">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-dim/40 border-b border-outline-variant/10">
+            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Código</th>
+            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">OSC / Demanda</th>
+            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Status</th>
+            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Prazo</th>
+            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-container-low" id="projects-table-body">
+          <tr><td colspan="5" class="px-8 py-16 text-center text-on-surface-variant">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p-6 border-t border-surface-container-low flex items-center justify-between text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+      <span id="items-count-text">Exibindo ...</span>
+    </div>
+  </section>
 </main>
+
 <script src="/public/js/api.js"></script>
 <script>
   let usuarioAtual;
@@ -311,271 +175,70 @@
     usuarioAtual = await protegerRota();
     if (!usuarioAtual) return;
 
-    // Mostra nome do usuário no header se tiver o elemento
-    const nomeEl = document.querySelector('[data-usuario-nome]');
-    if (nomeEl) nomeEl.textContent = usuarioAtual.nome;
+    document.getElementById('sidebar-nome').textContent = usuarioAtual.nome;
+    document.getElementById('sidebar-papel').textContent = usuarioAtual.is_master ? 'Administrador' : 'Usuário';
+    document.getElementById('avatar-inicial').textContent = usuarioAtual.nome.charAt(0).toUpperCase();
+
+    if (usuarioAtual.is_master) {
+      document.getElementById('link-usuarios').classList.remove('hidden');
+      document.getElementById('link-usuarios').classList.add('flex');
+    }
 
     await Promise.all([carregarStats(), carregarProjetos()]);
-
-    // Botão Atualizar Vista
-    document.querySelector('[onclick="refreshDashboard && refreshDashboard()"]')
-      ?.addEventListener('click', init);
-
-    // Botão Exportar
-    document.querySelector('[data-exportar]')
-      ?.addEventListener('click', () => API.exportarCSV());
-
-    // Logout
-    document.querySelectorAll('[data-logout], .sair-btn').forEach(el => {
-      el.addEventListener('click', () => API.logout());
-    });
   }
 
   async function carregarStats() {
     try {
       const data = await API.relatorio();
       const t = data.totais;
-      updateCard('card-total', t.total, '+este mês', 'progress-total', Math.min((t.total/200)*100, 100));
-      updateCard('card-open', t.em_analise, 'Ativos', 'progress-open', Math.min((t.em_analise/100)*100, 100));
-      updateCard('card-delayed', t.atrasados, 'Urgente', 'progress-delayed', Math.min((t.atrasados/50)*100, 100));
-    } catch (err) {
-      console.error('Stats:', err);
-    }
-  }
-
-  function updateCard(id, value, badge, progressId, progressValue) {
-    const card = document.getElementById(id);
-    if (!card) return;
-    const valueEl = card.querySelector('h3');
-    if (valueEl) valueEl.textContent = String(value).padStart(2, '0');
-    const badgeEl = card.querySelector('.flex.justify-between span:last-child');
-    if (badgeEl) badgeEl.textContent = badge;
-    setTimeout(() => {
-      const bar = document.getElementById(progressId);
-      if (bar) bar.style.width = progressValue + '%';
-    }, 100);
+      document.getElementById('val-total').textContent = String(t.total).padStart(2,'0');
+      document.getElementById('val-open').textContent = String(t.em_analise).padStart(2,'0');
+      document.getElementById('val-delayed').textContent = String(t.atrasados).padStart(2,'0');
+      document.getElementById('badge-total').textContent = '+este mês';
+      setTimeout(() => {
+        document.getElementById('progress-total').style.width = Math.min((t.total/200)*100,100)+'%';
+        document.getElementById('progress-open').style.width = Math.min((t.em_analise/100)*100,100)+'%';
+        document.getElementById('progress-delayed').style.width = Math.min((t.atrasados/50)*100,100)+'%';
+      }, 100);
+    } catch(err) { console.error('Stats:', err); }
   }
 
   async function carregarProjetos() {
     const tbody = document.getElementById('projects-table-body');
     const countEl = document.getElementById('items-count-text');
-    if (!tbody) return;
-
     try {
       const projetos = await API.listarProjetos();
-
       if (!projetos.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="px-8 py-16 text-center text-on-surface-variant">Nenhuma demanda encontrada.</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="5" class="px-8 py-16 text-center text-on-surface-variant">Nenhuma demanda encontrada.</td></tr>';
         if (countEl) countEl.textContent = 'Exibindo 0 demandas';
         return;
       }
-
-      const recentes = projetos.slice(0, 8);
-      tbody.innerHTML = recentes.map((p, i) => {
+      const recentes = projetos.slice(0,8);
+      tbody.innerHTML = recentes.map((p,i) => {
         const sem = p.semaforo || {};
         const cor = API.semaforoCor(sem);
         const label = API.semaforoLabel(sem);
         const statusLabel = API.statusLabel(p.status);
-        const isEven = i % 2 !== 0;
-
         let statusClass = 'bg-surface-container-high text-on-surface-variant';
-        if (p.status === 'EM_ANALISE') statusClass = 'bg-tertiary-fixed/30 text-on-tertiary-container';
-        if (p.status === 'GFCAP') statusClass = 'bg-secondary-container text-on-secondary-container';
-        if (p.status === 'OSC') statusClass = 'bg-primary-fixed text-on-primary-fixed';
-        if (p.status === 'FINALIZADO') statusClass = 'bg-surface-container-high text-on-surface-variant';
-
+        if (p.status==='EM_ANALISE') statusClass='bg-tertiary-fixed/30 text-on-tertiary-container';
+        if (p.status==='GFCAP') statusClass='bg-secondary-container text-on-secondary-container';
+        if (p.status==='OSC') statusClass='bg-primary-fixed text-on-primary-fixed';
         return `
-          <tr class="hover:bg-surface-container-low/50 transition-colors ${isEven ? 'bg-surface-container-low/20' : ''}" style="cursor:pointer" onclick="window.location='/projeto-detalhe.html?id=${p.id}'">
+          <tr class="hover:bg-surface-container-low/50 transition-colors ${i%2!==0?'bg-surface-container-low/20':''}" style="cursor:pointer" onclick="window.location='/projeto-detalhe.html?id=${p.id}'">
             <td class="px-8 py-5 text-sm font-mono text-on-surface-variant">${p.codigo}</td>
-            <td class="px-8 py-5">
-              <div class="flex flex-col">
-                <span class="text-sm font-bold text-primary">${p.osc_nome}</span>
-                <span class="text-xs text-on-surface-variant">${p.tipo_demanda}</span>
-              </div>
-            </td>
-            <td class="px-8 py-5">
-              <div class="inline-flex items-center gap-2 px-3 py-1 ${statusClass} rounded-full">
-                <div class="w-1.5 h-1.5 rounded-full" style="background:${cor}"></div>
-                <span class="text-xs font-bold">${statusLabel}</span>
-              </div>
-            </td>
-            <td class="px-8 py-5">
-              <span class="text-xs font-bold px-2 py-1 rounded-full" style="background:${cor}20;color:${cor}">${label}</span>
-            </td>
-            <td class="px-8 py-5 text-right">
-              <button class="p-2 hover:bg-surface-container-high rounded-lg transition-colors text-primary">
-                <span class="material-symbols-outlined">arrow_forward</span>
-              </button>
-            </td>
-          </tr>
-        `;
+            <td class="px-8 py-5"><div class="flex flex-col"><span class="text-sm font-bold text-primary">${p.osc_nome}</span><span class="text-xs text-on-surface-variant">${p.tipo_demanda}</span></div></td>
+            <td class="px-8 py-5"><div class="inline-flex items-center gap-2 px-3 py-1 ${statusClass} rounded-full"><div class="w-1.5 h-1.5 rounded-full" style="background:${cor}"></div><span class="text-xs font-bold">${statusLabel}</span></div></td>
+            <td class="px-8 py-5"><span class="text-xs font-bold px-2 py-1 rounded-full" style="background:${cor}20;color:${cor}">${label}</span></td>
+            <td class="px-8 py-5 text-right"><button class="p-2 hover:bg-surface-container-high rounded-lg text-primary"><span class="material-symbols-outlined">arrow_forward</span></button></td>
+          </tr>`;
       }).join('');
-
       if (countEl) countEl.textContent = `Exibindo ${recentes.length} de ${projetos.length} demandas`;
-
-    } catch (err) {
+    } catch(err) {
       tbody.innerHTML = `<tr><td colspan="5" class="px-8 py-8 text-center text-error">${err.message}</td></tr>`;
     }
   }
 
   init();
 </script>
-</body></html>
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                updateStatsUI(data);
-            } catch (error) {
-                console.error('Error fetching stats:', error);
-                // Fallback to static mock data if API fails in this demo environment
-                updateStatsUI({
-                    total: 148,
-                    totalChange: '+12% este mês',
-                    open: 32,
-                    openLabel: 'Ativos',
-                    delayed: 7,
-                    delayedLabel: 'Urgente'
-                });
-            }
-        }
-
-        function updateStatsUI(data) {
-            const updateCard = (id, value, badge, progressId, progressValue) => {
-                const card = document.getElementById(id);
-                card.querySelector('.skeleton')?.remove();
-                
-                // Update badge
-                const topRow = card.querySelector('.flex.justify-between');
-                let badgeEl = topRow.querySelector('span:not(.material-symbols-outlined)');
-                if (!badgeEl) {
-                    badgeEl = document.createElement('span');
-                    badgeEl.className = 'text-[10px] font-bold px-2 py-1 rounded';
-                    topRow.appendChild(badgeEl);
-                }
-                badgeEl.textContent = badge;
-                
-                // Set badge colors based on card type
-                if (id === 'card-total') badgeEl.className += ' text-on-surface-variant bg-surface-container-low';
-                if (id === 'card-open') badgeEl.className += ' text-on-tertiary-container bg-tertiary-fixed/30';
-                if (id === 'card-delayed') badgeEl.className += ' text-error bg-error-container';
-
-                // Update value
-                let valueEl = card.querySelector('h3');
-                if (!valueEl) {
-                    valueEl = document.createElement('h3');
-                    valueEl.className = 'text-3xl font-black text-primary';
-                    if (id === 'card-delayed') valueEl.className = 'text-3xl font-black text-error';
-                    card.insertBefore(valueEl, card.querySelector('.h-1'));
-                }
-                valueEl.textContent = value.toString().padStart(2, '0');
-
-                // Update progress
-                setTimeout(() => {
-                    document.getElementById(progressId).style.width = progressValue + '%';
-                }, 100);
-            };
-
-            updateCard('card-total', data.total, data.totalChange, 'progress-total', 66);
-            updateCard('card-open', data.open, data.openLabel, 'progress-open', 33);
-            updateCard('card-delayed', data.delayed, data.delayedLabel, 'progress-delayed', 20);
-        }
-
-        async function fetchProjects() {
-            try {
-                const response = await fetch('/api/projetos');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const projects = await response.json();
-                renderProjects(projects);
-            } catch (error) {
-                console.error('Error fetching projects:', error);
-                // Fallback to static mock data
-                renderProjects([
-                    { id: 'DEM-2024-001', title: 'Expansão de Data Center - Setor Sul', category: 'Infraestrutura Corporativa', status: 'Em Execução', deadline: '15 Out, 2024', statusType: 'success' },
-                    { id: 'DEM-2024-042', title: 'Migração Cloud AWS - Fase 2', category: 'Arquitetura de Sistemas', status: 'Atrasado', deadline: '01 Set, 2024', statusType: 'error' },
-                    { id: 'DEM-2024-089', title: 'Renovação de Licenças Microsoft 365', category: 'Gestão de Ativos', status: 'Aguardando Aprovação', deadline: '22 Dez, 2024', statusType: 'pending' },
-                    { id: 'DEM-2024-112', title: 'Implementação de Firewall Perimetral', category: 'Cibersegurança', status: 'Em Execução', deadline: '12 Nov, 2024', statusType: 'success' }
-                ]);
-            }
-        }
-
-        function renderProjects(projects) {
-            const tbody = document.getElementById('projects-table-body');
-            const itemsCountText = document.getElementById('items-count-text');
-            
-            if (!projects || projects.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="px-8 py-20 text-center">
-                            <div class="flex flex-col items-center gap-2 opacity-40">
-                                <span class="material-symbols-outlined text-4xl" data-icon="inventory_2">inventory_2</span>
-                                <p class="text-sm font-bold">Nenhuma demanda encontrada</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                itemsCountText.textContent = 'Exibindo 0 demandas';
-                return;
-            }
-
-            tbody.innerHTML = projects.map((p, index) => {
-                const isEven = index % 2 !== 0;
-                let statusClass = "bg-tertiary-fixed/30 text-on-tertiary-container";
-                let dotClass = "bg-on-tertiary-container";
-                let icon = "calendar_today";
-                let iconClass = "text-on-surface-variant";
-                let deadlineClass = "text-on-surface";
-
-                if (p.statusType === 'error') {
-                    statusClass = "bg-error-container text-error";
-                    dotClass = "bg-error";
-                    icon = "event_busy";
-                    iconClass = "text-error";
-                    deadlineClass = "text-error font-bold";
-                } else if (p.statusType === 'pending') {
-                    statusClass = "bg-secondary-container text-primary-container";
-                    dotClass = "bg-primary-container";
-                }
-
-                return `
-                    <tr class="hover:bg-surface-container-low/50 transition-colors ${isEven ? 'bg-surface-container-low/20' : ''}">
-                        <td class="px-8 py-5 text-sm font-mono text-on-surface-variant">#${p.id}</td>
-                        <td class="px-8 py-5">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-bold text-primary">${p.title}</span>
-                                <span class="text-xs text-on-surface-variant">${p.category}</span>
-                            </div>
-                        </td>
-                        <td class="px-8 py-5">
-                            <div class="inline-flex items-center gap-2 px-3 py-1 ${statusClass} rounded-full">
-                                <div class="w-1.5 h-1.5 rounded-full ${dotClass}"></div>
-                                <span class="text-xs font-bold">${p.status}</span>
-                            </div>
-                        </td>
-                        <td class="px-8 py-5">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined ${iconClass} text-sm" data-icon="${icon}">${icon}</span>
-                                <span class="text-sm font-medium ${deadlineClass}">${p.deadline}</span>
-                            </div>
-                        </td>
-                        <td class="px-8 py-5 text-right">
-                            <button class="p-2 hover:bg-surface-container-high rounded-lg transition-colors text-primary">
-                                <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            itemsCountText.textContent = `Exibindo ${projects.length} de 28 demandas`;
-        }
-
-        function refreshDashboard() {
-            fetchStats();
-            fetchProjects();
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            refreshDashboard();
-        });
-    </script>
-</body></html>
+</body>
+</html>
