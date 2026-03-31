@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-br"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - Gestão de Demandas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-variant": "#e1e3e4",
+              "primary-fixed-dim": "#abc7ff",
+              "on-secondary-container": "#4a6774",
+              "on-secondary-fixed": "#001f2a",
+              "on-error": "#ffffff",
+              "on-primary": "#ffffff",
+              "on-primary-fixed-variant": "#24467c",
+              "error": "#ba1a1a",
+              "on-primary-container": "#7796d1",
+              "on-primary-fixed": "#001b3f",
+              "surface": "#f8f9fa",
+              "tertiary-fixed": "#83fc8e",
+              "on-tertiary-fixed": "#002106",
+              "on-tertiary": "#ffffff",
+              "surface-container-high": "#e7e8e9",
+              "secondary": "#466270",
+              "surface-container-lowest": "#ffffff",
+              "inverse-on-surface": "#f0f1f2",
+              "on-surface-variant": "#43474f",
+              "primary": "#00193c",
+              "on-error-container": "#93000a",
+              "error-container": "#ffdad6",
+              "tertiary-container": "#00370e",
+              "surface-tint": "#3e5e95",
+              "surface-container-low": "#f3f4f5",
+              "secondary-fixed-dim": "#adcbda",
+              "on-background": "#191c1d",
+              "inverse-primary": "#abc7ff",
+              "on-surface": "#191c1d",
+              "primary-fixed": "#d7e2ff",
+              "tertiary-fixed-dim": "#66df75",
+              "on-secondary": "#ffffff",
+              "inverse-surface": "#2e3132",
+              "on-tertiary-container": "#2eac49",
+              "surface-container": "#edeeef",
+              "surface-bright": "#f8f9fa",
+              "secondary-fixed": "#c9e7f7",
+              "on-tertiary-fixed-variant": "#00531a",
+              "outline-variant": "#c4c6d1",
+              "primary-container": "#002d62",
+              "surface-dim": "#d9dadb",
+              "tertiary": "#001f05",
+              "background": "#f8f9fa",
+              "surface-container-highest": "#e1e3e4",
+              "outline": "#747781",
+              "on-secondary-fixed-variant": "#2e4b57",
+              "secondary-container": "#c6e4f4"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-corporate-gradient {
+            background: linear-gradient(135deg, #00193c 0%, #002d62 100%);
+        }
+        .glass-effect {
+            background: rgba(248, 249, 250, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-on-background overflow-hidden relative">
+<!-- Decorative Architectural Background Elements -->
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+<div class="absolute -top-[10%] -left-[5%] w-[40%] h-[60%] bg-surface-container-low rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+<div class="absolute top-[20%] -right-[10%] w-[50%] h-[70%] bg-primary-fixed/20 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+<div class="absolute bottom-0 right-0 w-full h-[40%] bg-gradient-to-t from-surface-container-low to-transparent"></div>
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-10 w-full max-w-[420px] px-6">
+<!-- Brand Identity Branding -->
+<div class="mb-10 text-center">
+<div class="inline-flex items-center justify-center w-16 h-16 mb-6 rounded-xl bg-corporate-gradient shadow-lg">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="architecture">architecture</span>
+</div>
+<h1 class="text-display-sm font-black tracking-tighter text-primary mb-2">Demand System</h1>
+<p class="text-on-surface-variant text-sm font-medium tracking-wide">EXECUTIVE ARCHITECT PORTAL</p>
+</div>
+<!-- Login Card -->
+<section class="bg-surface-container-lowest p-8 md:p-10 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.06)] relative overflow-hidden">
+<!-- Institutional Sophistication Detail -->
+<div class="absolute top-0 left-0 w-full h-1 bg-corporate-gradient"></div>
+<header class="mb-8">
+<h2 class="text-xl font-bold text-primary tracking-tight">Gestão de Demandas</h2>
+<p class="text-on-surface-variant text-sm mt-1">Acesse sua conta para continuar</p>
+</header>
+<form class="space-y-6" id="loginForm">
+<!-- Error Message Container -->
+<div class="hidden text-error text-xs font-semibold bg-error-container/30 p-3 rounded-lg border border-error/20 flex items-center gap-2" id="errorMessage">
+<span class="material-symbols-outlined text-sm">error</span>
+<span id="errorText">E-mail ou senha incorretos.</span>
+</div>
+<!-- Input Group: Email -->
+<div class="space-y-2">
+<label class="block text-[0.6875rem] font-bold text-on-surface-variant uppercase tracking-widest px-1" for="email">E-mail Corporativo</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-lg group-focus-within:text-primary transition-colors">mail</span>
+</div>
+<input class="block w-full pl-10 pr-4 py-3 bg-surface-container-low border-0 border-b-2 border-transparent focus:ring-0 focus:border-primary transition-all duration-300 text-sm placeholder:text-outline-variant rounded-t-lg" id="email" name="email" placeholder="usuario@empresa.com.br" required="" type="email"/>
+</div>
+</div>
+<!-- Input Group: Password -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="block text-[0.6875rem] font-bold text-on-surface-variant uppercase tracking-widest px-1" for="password">Senha</label>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-lg group-focus-within:text-primary transition-colors">lock</span>
+</div>
+<input class="block w-full pl-10 pr-10 py-3 bg-surface-container-low border-0 border-b-2 border-transparent focus:ring-0 focus:border-primary transition-all duration-300 text-sm placeholder:text-outline-variant rounded-t-lg" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-primary transition-colors" id="togglePassword" type="button">
+<span class="material-symbols-outlined text-lg" data-icon="visibility" id="passwordIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Submit Action -->
+<button class="w-full py-4 px-6 bg-corporate-gradient text-white font-bold rounded-lg shadow-md hover:shadow-xl hover:scale-[1.01] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed" id="submitButton" type="submit">
+<span id="buttonText">Entrar</span>
+<span class="material-symbols-outlined text-lg" data-icon="arrow_forward" id="buttonIcon">arrow_forward</span>
+</button>
+<!-- Auxiliary Links -->
+<div class="pt-4 text-center">
+<a class="text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors tracking-tight" href="#">Esqueci a senha</a>
+</div>
+</form>
+</section>
+<!-- Footer / Legal Branding -->
+<footer class="mt-12 text-center">
+<p class="text-[10px] text-outline uppercase tracking-[0.2em] font-medium">© 2024 Institutional Systems • All Rights Reserved</p>
+</footer>
+</main>
+<!-- Aesthetic Decorative Image Layer (Low Opacity) -->
+<div class="absolute bottom-8 right-8 w-64 h-64 opacity-[0.03] pointer-events-none">
+<img alt="Architectural details" class="w-full h-full object-contain grayscale" data-alt="abstract architectural blueprint lines showing technical drawing details on a clean white background with high precision" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzXRtNpsZly3vD9jtyU-ogrtRagudQnahPHM3ETxBH7Dlc1hQqekcA9juIjSPwr6Q0OOyAZ6vLR5ux9iZ179_DD9M1emGJRctJlFbEVarwRvLsj-dVdZ2qK07JNefHlP2b8rZ2jWBAUddIXN9r2kmgl93P9eOcAtl4vxW3SgtbpKmlq38KR9flTN3NYdLSGkTKEmCIEI6MQj5ClX9ffYo3A-4NrK9nKeYhLJMPs4XCWpx2gY2DsbgR5FKiL3k5A06EyQ9uRjWne5lJ"/>
+</div>
+<script>
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const buttonIcon = document.getElementById('buttonIcon');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = document.getElementById('passwordIcon');
+
+        // Toggle password visibility
+        togglePassword.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            passwordIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // UI State: Loading
+            errorMessage.classList.add('hidden');
+            submitButton.disabled = true;
+            buttonText.textContent = 'Processando...';
+            buttonIcon.textContent = 'progress_activity';
+            buttonIcon.classList.add('animate-spin');
+
+            const formData = new FormData(loginForm);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    // Sessão via cookie httpOnly — apenas redireciona
+                    window.location.href = '/index.html';
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.erro || errorData.message || 'Falha na autenticação. Verifique suas credenciais.');
+                }
+            } catch (error) {
+                // UI State: Error
+                errorText.textContent = error.message;
+                errorMessage.classList.remove('hidden');
+            } finally {
+                // UI State: Reset
+                submitButton.disabled = false;
+                buttonText.textContent = 'Entrar';
+                buttonIcon.textContent = 'arrow_forward';
+                buttonIcon.classList.remove('animate-spin');
+            }
+        });
+    </script>
+</body></html>

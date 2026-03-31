@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relatórios — Demand System</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          primary: '#00193c', 'primary-container': '#002d62',
+          surface: '#f8f9fa', 'surface-container-low': '#f3f4f5',
+          'surface-container-lowest': '#ffffff', 'surface-dim': '#d9dadb',
+          'on-surface-variant': '#43474f', error: '#ba1a1a',
+          'error-container': '#ffdad6', 'on-tertiary-container': '#2eac49',
+          'tertiary-fixed': '#83fc8e', 'outline-variant': '#c4c6d1',
+          'surface-container-high': '#e7e8e9'
+        },
+        fontFamily: { body: ['Inter'] }
+      }}
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; vertical-align:middle; }
+    .bg-gradient-primary { background: linear-gradient(135deg,#00193c 0%,#002d62 100%); }
+  </style>
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen">
+
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50">
+  <div class="mb-10 px-2">
+    <span class="text-xl font-black tracking-tighter text-primary">Demand System</span>
+  </div>
+  <nav class="flex-1 space-y-1">
+    <a href="/index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-medium">
+      <span class="material-symbols-outlined">dashboard</span>Dashboard
+    </a>
+    <a href="/projetos.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-medium">
+      <span class="material-symbols-outlined">assignment</span>Projetos
+    </a>
+    <a href="/usuarios.html" id="link-usuarios" class="hidden flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-medium">
+      <span class="material-symbols-outlined">group</span>Usuários
+    </a>
+    <a href="/relatorios.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white text-primary shadow-sm font-bold border-r-4 border-primary text-sm">
+      <span class="material-symbols-outlined">assessment</span>Relatórios
+    </a>
+  </nav>
+  <div class="mt-auto pt-6 border-t border-slate-100">
+    <button onclick="API.logout()" class="w-full text-left px-3 py-2 text-sm text-slate-500 hover:text-error transition-colors">
+      <span class="material-symbols-outlined">logout</span> Sair
+    </button>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="ml-64 p-8 pt-10">
+  <div class="flex justify-between items-end mb-8">
+    <div>
+      <h1 class="text-4xl font-black tracking-tight text-primary">Relatórios</h1>
+      <p class="text-on-surface-variant font-medium mt-1">Filtre e exporte os dados do sistema.</p>
+    </div>
+    <button onclick="exportarCSV()" class="bg-gradient-primary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center gap-2">
+      <span class="material-symbols-outlined">download</span>Exportar CSV
+    </button>
+  </div>
+
+  <!-- Totalizadores -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="cards-totais">
+    <div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm">
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Total</p>
+      <h3 class="text-3xl font-black text-primary" id="tot-total">—</h3>
+    </div>
+    <div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm">
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Em Análise</p>
+      <h3 class="text-3xl font-black text-primary" id="tot-analise">—</h3>
+    </div>
+    <div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm">
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Finalizados</p>
+      <h3 class="text-3xl font-black text-on-tertiary-container" id="tot-finalizado">—</h3>
+    </div>
+    <div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm border-l-4 border-error/30">
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Atrasados</p>
+      <h3 class="text-3xl font-black text-error" id="tot-atrasados">—</h3>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="bg-surface-container-low p-6 rounded-xl mb-6">
+    <h2 class="text-sm font-black uppercase tracking-widest text-on-surface-variant mb-4">Filtros</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Status</label>
+        <select id="f-status" class="w-full bg-surface-container-lowest rounded-lg border-none text-sm px-3 py-2.5 focus:ring-2 focus:ring-primary/20">
+          <option value="">Todos</option>
+          <option value="EM_ANALISE">Em Análise</option>
+          <option value="GFCAP">GFCAP</option>
+          <option value="OSC">OSC</option>
+          <option value="FINALIZADO">Finalizado</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Tipo de Demanda</label>
+        <input id="f-tipo" type="text" placeholder="Ex: Plano de Trabalho" class="w-full bg-surface-container-lowest rounded-lg border-none text-sm px-3 py-2.5 focus:ring-2 focus:ring-primary/20"/>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Período Início</label>
+        <input id="f-inicio" type="date" class="w-full bg-surface-container-lowest rounded-lg border-none text-sm px-3 py-2.5 focus:ring-2 focus:ring-primary/20"/>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Período Fim</label>
+        <input id="f-fim" type="date" class="w-full bg-surface-container-lowest rounded-lg border-none text-sm px-3 py-2.5 focus:ring-2 focus:ring-primary/20"/>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button onclick="aplicarFiltros()" class="px-5 py-2 bg-primary text-white rounded-lg text-sm font-bold">Aplicar Filtros</button>
+      <button onclick="limparFiltros()" class="px-5 py-2 bg-surface-container-high rounded-lg text-sm font-bold">Limpar</button>
+    </div>
+  </div>
+
+  <!-- Tabela -->
+  <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+    <table class="w-full text-left">
+      <thead class="bg-surface-dim">
+        <tr>
+          <th class="px-5 py-4 text-xs font-black uppercase tracking-widest text-primary">Código</th>
+          <th class="px-5 py-4 text-xs font-black uppercase tracking-widest text-primary">OSC</th>
+          <th class="px-5 py-4 text-xs font-black uppercase tracking-widest text-primary">Tipo</th>
+          <th class="px-5 py-4 text-xs font-black uppercase tracking-widest text-primary">Status</th>
+          <th class="px-5 py-4 text-xs font-black uppercase tracking-widest text-primary">Gestor</th>
+          <th class="px-5 py-4 text-xs font-black uppercase tracking-widest text-primary">Analista</th>
+          <th class="px-5 py-4 text-xs font-black uppercase tracking-widest text-primary">Prazo</th>
+          <th class="px-5 py-4 text-xs font-black uppercase tracking-widest text-primary text-center">Dias Rest.</th>
+        </tr>
+      </thead>
+      <tbody id="tabela-relatorio" class="divide-y divide-slate-50">
+        <tr><td colspan="8" class="px-5 py-10 text-center text-on-surface-variant">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<script src="/js/api.js"></script>
+<script>
+  let filtrosAtivos = {};
+
+  async function init() {
+    const usuario = await protegerRota();
+    if (!usuario) return;
+    if (usuario.is_master) {
+      document.getElementById('link-usuarios')?.classList.remove('hidden');
+    }
+    await carregarRelatorio();
+  }
+
+  function getFiltros() {
+    return {
+      status: document.getElementById('f-status').value || undefined,
+      tipo: document.getElementById('f-tipo').value || undefined,
+      periodo_inicio: document.getElementById('f-inicio').value || undefined,
+      periodo_fim: document.getElementById('f-fim').value || undefined,
+    };
+  }
+
+  async function carregarRelatorio() {
+    const tbody = document.getElementById('tabela-relatorio');
+    try {
+      const data = await API.relatorio(filtrosAtivos);
+      const t = data.totais;
+
+      document.getElementById('tot-total').textContent = t.total;
+      document.getElementById('tot-analise').textContent = t.em_analise;
+      document.getElementById('tot-finalizado').textContent = t.finalizado;
+      document.getElementById('tot-atrasados').textContent = t.atrasados;
+
+      if (!data.projetos.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="px-5 py-10 text-center text-on-surface-variant">Nenhum projeto encontrado.</td></tr>';
+        return;
+      }
+
+      const statusLabel = { EM_ANALISE: 'Em Análise', GFCAP: 'GFCAP', OSC: 'OSC', FINALIZADO: 'Finalizado' };
+      tbody.innerHTML = data.projetos.map((p, i) => `
+        <tr class="hover:bg-surface-container-low/50 transition-colors ${i%2!==0?'bg-surface-container-low/20':''}" style="cursor:pointer" onclick="window.location='/projeto-detalhe.html?id=${p.id}'">
+          <td class="px-5 py-4 font-mono text-xs text-on-surface-variant">${p.codigo}</td>
+          <td class="px-5 py-4 text-sm font-semibold text-primary">${p.osc_nome}</td>
+          <td class="px-5 py-4 text-xs text-on-surface-variant">${p.tipo_demanda}</td>
+          <td class="px-5 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold bg-surface-container-high">${statusLabel[p.status]||p.status}</span></td>
+          <td class="px-5 py-4 text-sm">${p.gestor||'—'}</td>
+          <td class="px-5 py-4 text-sm">${p.analista||'—'}</td>
+          <td class="px-5 py-4 text-sm">${p.data_prevista ? API.formatarData(p.data_prevista) : '—'}</td>
+          <td class="px-5 py-4 text-center">
+            <span class="text-xs font-bold" style="color:${p.dias_restantes===null?'#747781':p.dias_restantes>=5?'#2eac49':p.dias_restantes>=2?'#f59e0b':p.dias_restantes>0?'#ba1a1a':'#000'}">
+              ${p.dias_restantes===null?'—':p.dias_restantes>0?'+'+p.dias_restantes:p.dias_restantes}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="8" class="px-5 py-8 text-center text-error">${err.message}</td></tr>`;
+    }
+  }
+
+  function aplicarFiltros() {
+    filtrosAtivos = getFiltros();
+    carregarRelatorio();
+  }
+
+  function limparFiltros() {
+    document.getElementById('f-status').value = '';
+    document.getElementById('f-tipo').value = '';
+    document.getElementById('f-inicio').value = '';
+    document.getElementById('f-fim').value = '';
+    filtrosAtivos = {};
+    carregarRelatorio();
+  }
+
+  function exportarCSV() {
+    API.exportarCSV(filtrosAtivos);
+  }
+
+  init();
+</script>
+</body>
+</html>
