@@ -1,343 +1,207 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Detalhe do Projeto — Demand System</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script>
-    tailwind.config = {
-      theme: { extend: {
-        colors: {
-          "surface-variant":"#e1e3e4","on-error":"#ffffff","on-primary":"#ffffff",
-          "error":"#ba1a1a","surface":"#f8f9fa","tertiary-fixed":"#83fc8e",
-          "surface-container-high":"#e7e8e9","secondary":"#466270",
-          "surface-container-lowest":"#ffffff","on-surface-variant":"#43474f",
-          "primary":"#00193c","error-container":"#ffdad6",
-          "surface-container-low":"#f3f4f5","on-background":"#191c1d",
-          "on-surface":"#191c1d","primary-fixed":"#d7e2ff","on-secondary":"#ffffff",
-          "on-tertiary-container":"#2eac49","surface-container":"#edeeef",
-          "secondary-fixed":"#c9e7f7","outline-variant":"#c4c6d1",
-          "primary-container":"#002d62","surface-dim":"#d9dadb",
-          "background":"#f8f9fa","outline":"#747781","secondary-container":"#c6e4f4"
-        },
-        fontFamily: { headline:["Inter"], body:["Inter"] },
-        borderRadius: { DEFAULT:"0.125rem", lg:"0.25rem", xl:"0.5rem", full:"0.75rem" }
-      }}
-    }
-  </script>
-  <style>
-    .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; vertical-align:middle; }
-    .bg-primary-gradient { background: linear-gradient(135deg,#00193c 0%,#002d62 100%); }
-    body { font-family:'Inter',sans-serif; }
-    [v-cloak] { display:none; }
-  </style>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Detalhe — Gestão de Demandas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle;}</style>
 </head>
-<body class="bg-surface text-on-surface">
-<div id="app" v-cloak>
+<body class="bg-slate-50 text-slate-800">
+<aside id="sidebar" class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50 border-r border-slate-100"></aside>
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-white/90 backdrop-blur-md z-40 border-b border-slate-100 flex items-center justify-between px-8">
+  <nav class="flex items-center gap-2 text-sm text-slate-400">
+    <a href="/projetos.html" class="hover:text-[#00193c]">Projetos</a>
+    <span class="material-symbols-outlined text-xs">chevron_right</span>
+    <span class="font-semibold text-[#00193c]" id="hdr-codigo">...</span>
+  </nav>
+  <button id="btn-tramitar" onclick="tramitar()" class="hidden px-5 py-2 bg-[#00193c] text-white font-bold rounded-xl text-sm hover:opacity-90 flex items-center gap-2">
+    <span class="material-symbols-outlined text-sm">swap_horiz</span>Tramitar
+  </button>
+</header>
 
-  <!-- Sidebar -->
-  <aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50">
-    <div class="mb-10 px-2">
-      <span class="text-xl font-black tracking-tighter text-primary">Demand System</span>
-    </div>
-    <nav class="flex-1 space-y-1">
-      <a href="/index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-medium"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
-      <a href="/projetos.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white text-primary shadow-sm font-bold border-r-4 border-primary text-sm"><span class="material-symbols-outlined">assignment</span>Projetos</a>
-      <a href="/usuarios.html" v-if="usuario && usuario.is_master" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-medium"><span class="material-symbols-outlined">group</span>Usuários</a>
-      <a href="/relatorios.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-medium"><span class="material-symbols-outlined">assessment</span>Relatórios</a>
-    </nav>
-    <div class="mt-auto pt-6 border-t border-slate-100">
-      <div class="px-2 mb-4" v-if="usuario">
-        <p class="text-sm font-bold text-primary truncate">{{ usuario.nome }}</p>
-        <p class="text-xs text-slate-500">{{ usuario.is_master ? 'Administrador' : 'Usuário' }}</p>
-      </div>
-      <button @click="sair()" class="px-3 py-2 text-sm text-slate-500 hover:text-red-500 flex items-center gap-2"><span class="material-symbols-outlined text-sm">logout</span>Sair</button>
-    </div>
-  </aside>
-
-  <!-- TopBar -->
-  <header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-white/80 backdrop-blur-md z-40 border-b border-slate-100 flex justify-between items-center px-8">
-    <nav class="flex items-center gap-2 text-xs text-on-surface-variant">
-      <a href="/projetos.html" class="hover:text-primary">Projetos</a>
-      <span class="material-symbols-outlined text-xs">chevron_right</span>
-      <span class="font-semibold text-primary" v-if="projeto">{{ projeto.codigo }}</span>
-    </nav>
-    <button v-if="projeto && projeto.status !== 'FINALIZADO'"
-      @click="tramitar()" :disabled="tramitando"
-      class="px-5 py-2 bg-primary-gradient text-white font-bold rounded-xl text-sm shadow-md hover:opacity-90 disabled:opacity-40 flex items-center gap-2">
-      <span class="material-symbols-outlined text-sm">swap_horiz</span>
-      {{ tramitando ? 'Tramitando...' : 'Tramitar Projeto' }}
-    </button>
-  </header>
-
-  <!-- Loading -->
-  <main class="ml-64 pt-24 pb-12 px-8" v-if="loading">
-    <div class="flex justify-center py-32 text-on-surface-variant">
-      <span class="material-symbols-outlined animate-spin mr-2">progress_activity</span> Carregando...
-    </div>
-  </main>
-
-  <!-- Erro -->
-  <main class="ml-64 pt-24 pb-12 px-8 text-center" v-else-if="erro">
-    <span class="material-symbols-outlined text-4xl text-error block mb-3">error</span>
-    <p class="text-error font-bold mb-4">{{ erro }}</p>
-    <a href="/projetos.html" class="text-primary text-sm font-bold hover:underline">← Voltar para Projetos</a>
-  </main>
-
-  <!-- Conteúdo principal -->
-  <main class="ml-64 pt-24 pb-12 px-8 min-h-screen" v-else-if="projeto">
-
-    <!-- Header -->
-    <header class="mb-8">
-      <div class="flex flex-wrap items-center gap-2 mb-3">
-        <span class="px-3 py-1 rounded-full text-xs font-bold" :style="{ background: corSemaforo+'20', color: corSemaforo }">{{ labelSemaforo }}</span>
-        <span class="px-3 py-1 rounded-full text-xs font-bold bg-surface-container-high text-on-surface-variant">{{ labelStatus }}</span>
-        <span class="text-xs text-on-surface-variant">Recebido: {{ fmt(projeto.data_recebimento) }}</span>
-      </div>
-      <h1 class="text-4xl font-black tracking-tight text-primary">{{ projeto.osc_nome }}</h1>
-      <p class="text-on-surface-variant mt-1">{{ projeto.tipo_demanda }}</p>
-    </header>
-
-    <div class="grid grid-cols-12 gap-6">
-
-      <!-- Coluna esquerda -->
-      <div class="col-span-12 lg:col-span-8 space-y-6">
-
-        <!-- Info -->
-        <section class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
-          <h2 class="text-base font-bold text-primary mb-6 flex items-center gap-2"><span class="material-symbols-outlined">info</span>Informações Gerais</h2>
-          <div class="grid grid-cols-3 gap-5">
-            <div><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Analista</label><p class="text-sm font-semibold">{{ projeto.analista_nome || '—' }}</p></div>
-            <div><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Gestor</label><p class="text-sm font-semibold">{{ projeto.gestor_nome || '—' }}</p></div>
-            <div><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Prazo (d.ú.)</label><p class="text-sm font-semibold">{{ projeto.prazo_dias || 7 }}</p></div>
-            <div><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Data Distribuição</label><p class="text-sm font-semibold">{{ fmt(projeto.data_distribuicao) }}</p></div>
-            <div><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Data Prevista</label><p class="text-sm font-semibold">{{ fmt(projeto.data_prevista) }}</p></div>
-            <div><label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Saída Diretoria</label><p class="text-sm font-semibold">{{ fmt(projeto.data_saida_diretoria) }}</p></div>
-            <div v-if="projeto.principais_apontamentos" class="col-span-3">
-              <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Principais Apontamentos</label>
-              <p class="text-sm leading-relaxed">{{ projeto.principais_apontamentos }}</p>
-            </div>
-            <div v-if="projeto.observacoes_gerencia" class="col-span-3">
-              <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Observações da Gerência</label>
-              <p class="text-sm leading-relaxed">{{ projeto.observacoes_gerencia }}</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Edição (gestor / master) -->
-        <section class="bg-surface-container-lowest rounded-xl p-8 shadow-sm" v-if="podeEditar">
-          <h2 class="text-base font-bold text-primary mb-6 flex items-center gap-2"><span class="material-symbols-outlined">edit</span>Atualizar Projeto</h2>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Data de Distribuição</label>
-              <input v-model="ed.data_distribuicao" type="date" class="w-full bg-surface-container-low rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20"/>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Data Saída Diretoria</label>
-              <input v-model="ed.data_saida_diretoria" type="date" class="w-full bg-surface-container-low rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20"/>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Data de Pausa</label>
-              <input v-model="ed.data_pausa" type="date" class="w-full bg-surface-container-low rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20"/>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Motivo da Pausa</label>
-              <input v-model="ed.motivo_pausa" type="text" class="w-full bg-surface-container-low rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20" placeholder="Descreva o motivo"/>
-            </div>
-            <div class="col-span-2">
-              <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Principais Apontamentos</label>
-              <textarea v-model="ed.principais_apontamentos" rows="3" class="w-full bg-surface-container-low rounded-xl border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20"></textarea>
-            </div>
-            <div class="col-span-2">
-              <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Observações da Gerência</label>
-              <textarea v-model="ed.observacoes_gerencia" rows="2" class="w-full bg-surface-container-low rounded-xl border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/20"></textarea>
-            </div>
-          </div>
-          <div class="flex items-center justify-end gap-4 mt-4">
-            <span v-if="msgSalvo" class="text-on-tertiary-container text-sm font-bold">✅ {{ msgSalvo }}</span>
-            <button @click="salvar()" :disabled="salvando" class="px-8 py-2.5 bg-primary-gradient text-white font-bold rounded-xl text-sm disabled:opacity-40">{{ salvando ? 'Salvando...' : 'Salvar' }}</button>
-          </div>
-        </section>
-
-        <!-- Comentário -->
-        <section class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
-          <h2 class="text-base font-bold text-primary mb-4 flex items-center gap-2"><span class="material-symbols-outlined">add_comment</span>Novo Comentário</h2>
-          <textarea v-model="comentario" rows="4" placeholder="Observações ou atualizações sobre o atendimento..." class="w-full bg-surface-container-low border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400"></textarea>
-          <div class="flex justify-end mt-3">
-            <button @click="enviarComentario()" :disabled="enviando || !comentario.trim()" class="px-8 py-2.5 bg-primary text-white font-bold rounded-xl text-sm disabled:opacity-40">{{ enviando ? 'Enviando...' : 'Enviar Comentário' }}</button>
-          </div>
-        </section>
-
-      </div>
-
-      <!-- Coluna direita -->
-      <div class="col-span-12 lg:col-span-4 space-y-6">
-
-        <!-- Semáforo -->
-        <section class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
-          <h3 class="text-xs font-black text-primary uppercase tracking-widest mb-4">Situação do Prazo</h3>
-          <div class="flex items-center gap-4">
-            <div class="w-16 h-16 rounded-full flex items-center justify-center font-black text-2xl text-white flex-shrink-0" :style="{ background: corSemaforo }">
-              {{ diasDisplay }}
-            </div>
-            <div>
-              <p class="font-bold text-primary text-sm">{{ labelSemaforo }}</p>
-              <p class="text-xs text-on-surface-variant mt-1">{{ descSemaforo }}</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Histórico -->
-        <section class="bg-surface-container-low rounded-xl p-6">
-          <h3 class="text-xs font-black text-primary uppercase tracking-widest mb-4 flex items-center justify-between">
-            Histórico de Atendimento
-            <span class="material-symbols-outlined text-lg">chat</span>
-          </h3>
-          <div class="space-y-3" v-if="historico.length">
-            <div v-for="h in historico" :key="h.id" class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-primary">
-              <div class="flex justify-between items-center mb-2">
-                <span class="text-xs font-black text-primary uppercase">{{ h.usuario_nome || 'Sistema' }}</span>
-                <span class="text-xs text-on-surface-variant">{{ fmtHora(h.criado_em) }}</span>
-              </div>
-              <p class="text-xs text-on-surface leading-relaxed">{{ h.texto }}</p>
-              <span v-if="h.tipo && h.tipo !== 'comentario'" class="mt-1 inline-block text-xs px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-bold">{{ h.tipo }}</span>
-            </div>
-          </div>
-          <p v-else class="text-xs text-on-surface-variant text-center py-4">Nenhum comentário ainda.</p>
-        </section>
-
-      </div>
-    </div>
-  </main>
-
-</div>
+<main class="ml-64 pt-24 pb-12 px-8 min-h-screen" id="main-content">
+  <div class="flex justify-center py-32 text-slate-400">Carregando...</div>
+</main>
 
 <script src="/public/js/api.js"></script>
 <script>
-const { createApp, ref, computed, onMounted } = Vue;
+const pid = new URLSearchParams(window.location.search).get('id');
+let usuario, projeto, historico = [];
 
-createApp({
-  setup() {
-    const pid      = new URLSearchParams(window.location.search).get('id');
-    const projeto  = ref(null);
-    const historico = ref([]);
-    const usuario  = ref(null);
-    const loading  = ref(true);
-    const erro     = ref('');
-    const comentario = ref('');
-    const enviando  = ref(false);
-    const tramitando = ref(false);
-    const salvando  = ref(false);
-    const msgSalvo  = ref('');
-    const ed = ref({ data_distribuicao:'', data_saida_diretoria:'', data_pausa:'', motivo_pausa:'', principais_apontamentos:'', observacoes_gerencia:'' });
+async function init() {
+  usuario = await protegerRota();
+  if (!usuario) return;
+  montarSidebar(usuario, 'proj');
+  if (!pid) { renderErro('ID não informado.'); return; }
+  await carregar();
+}
 
-    const podeEditar = computed(() => {
-      if (!usuario.value || !projeto.value) return false;
-      return usuario.value.is_master || projeto.value.gestor_id === usuario.value.id || projeto.value.analista_id === usuario.value.id;
-    });
+async function carregar() {
+  try {
+    [projeto, historico] = await Promise.all([
+      API.buscarProjeto(pid),
+      API.listarHistorico(pid)
+    ]);
+    if (!projeto) { renderErro('Projeto não encontrado.'); return; }
+    render();
+  } catch(e) { renderErro(e.message); }
+}
 
-    const labelStatus = computed(() => {
-      const m = { EM_ANALISE:'Em Análise', GFCAP:'GFCAP', OSC:'OSC', FINALIZADO:'Finalizado' };
-      return m[projeto.value?.status] || '';
-    });
+function renderErro(msg) {
+  document.getElementById('main-content').innerHTML = `<div class="text-center py-32"><p class="text-red-500 font-bold">${msg}</p><a href="/projetos.html" class="mt-4 inline-block text-[#00193c] text-sm font-bold hover:underline">← Voltar</a></div>`;
+}
 
-    const corSemaforo = computed(() => API.semaforoCor(projeto.value?.semaforo));
-    const labelSemaforo = computed(() => API.semaforoLabel(projeto.value?.semaforo));
+function podeEditar() {
+  return usuario.is_master || projeto.gestor_id === usuario.id || projeto.analista_id === usuario.id;
+}
 
-    const diasDisplay = computed(() => {
-      const s = projeto.value?.semaforo;
-      if (!s || s.dias === null || s.dias === undefined) return '—';
-      return Math.abs(s.dias);
-    });
+function render() {
+  document.getElementById('hdr-codigo').textContent = projeto.codigo;
+  const cor = API.semaforoCor(projeto.semaforo);
+  const semLabel = API.semaforoLabel(projeto.semaforo);
+  const statusLabel = API.statusLabel(projeto.status);
 
-    const descSemaforo = computed(() => {
-      const c = projeto.value?.semaforo?.cor;
-      const m = { VERDE:'Dentro do prazo', AMARELO:'Atenção ao prazo', VERMELHO:'Prazo crítico', VENCIDO:'Prazo vencido', FINALIZADO:'Projeto encerrado', AGUARDANDO:'Aguardando distribuição' };
-      return m[c] || '';
-    });
-
-    function fmt(d) { return API.formatarData(d); }
-    function fmtHora(d) {
-      if (!d) return '';
-      const dt = new Date(d);
-      return dt.toLocaleDateString('pt-BR') + ' ' + dt.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
-    }
-
-    async function carregar() {
-      if (!pid) { erro.value = 'ID não informado.'; loading.value = false; return; }
-      try {
-        const [r1, r2] = await Promise.all([
-          fetch('/api/projetos/' + pid),
-          fetch('/api/projetos/' + pid + '/historico')
-        ]);
-        if (r1.status === 401) { window.location.href = '/login.html'; return; }
-        if (!r1.ok) throw new Error('Projeto não encontrado.');
-        projeto.value = await r1.json();
-        if (r2.ok) historico.value = await r2.json();
-        ed.value = {
-          data_distribuicao:    projeto.value.data_distribuicao?.split('T')[0] || '',
-          data_saida_diretoria: projeto.value.data_saida_diretoria?.split('T')[0] || '',
-          data_pausa:           projeto.value.data_pausa?.split('T')[0] || '',
-          motivo_pausa:         projeto.value.motivo_pausa || '',
-          principais_apontamentos: projeto.value.principais_apontamentos || '',
-          observacoes_gerencia:    projeto.value.observacoes_gerencia || ''
-        };
-      } catch(e) { erro.value = e.message; }
-      finally { loading.value = false; }
-    }
-
-    async function enviarComentario() {
-      if (!comentario.value.trim()) return;
-      enviando.value = true;
-      try {
-        const novo = await API.adicionarComentario(pid, comentario.value);
-        historico.value.unshift({ ...novo, usuario_nome: usuario.value?.nome || 'Você' });
-        comentario.value = '';
-      } catch(e) { alert(e.message); }
-      finally { enviando.value = false; }
-    }
-
-    async function tramitar() {
-      const fluxo = { EM_ANALISE:'GFCAP', GFCAP:'OSC', OSC:'FINALIZADO' };
-      const prox = fluxo[projeto.value?.status];
-      if (!prox || !confirm('Tramitar para "' + prox + '"?')) return;
-      tramitando.value = true;
-      try {
-        const atualizado = await API.tramitarProjeto(pid);
-        projeto.value.status = atualizado.status;
-        await carregar();
-      } catch(e) { alert(e.message); }
-      finally { tramitando.value = false; }
-    }
-
-    async function salvar() {
-      salvando.value = true;
-      msgSalvo.value = '';
-      try {
-        const atualizado = await API.atualizarProjeto(pid, ed.value);
-        projeto.value = { ...projeto.value, ...atualizado };
-        msgSalvo.value = 'Salvo!';
-        setTimeout(() => { msgSalvo.value = ''; }, 3000);
-      } catch(e) { alert(e.message); }
-      finally { salvando.value = false; }
-    }
-
-    function sair() { API.logout(); }
-
-    onMounted(async () => {
-      const me = await API.me();
-      if (!me?.usuario) { window.location.href = '/login.html'; return; }
-      usuario.value = me.usuario;
-      await carregar();
-    });
-
-    return { projeto, historico, usuario, loading, erro, comentario, enviando, tramitando, salvando, msgSalvo, ed, podeEditar, labelStatus, corSemaforo, labelSemaforo, diasDisplay, descSemaforo, fmt, fmtHora, enviarComentario, tramitar, salvar, sair };
+  if (projeto.status !== 'FINALIZADO') {
+    document.getElementById('btn-tramitar').classList.remove('hidden');
+    document.getElementById('btn-tramitar').classList.add('flex');
   }
-}).mount('#app');
+
+  const fluxo = {EM_ANALISE:'GFCAP',GFCAP:'OSC',OSC:'FINALIZADO'};
+  const proximo = fluxo[projeto.status];
+
+  const editFields = podeEditar() ? `
+    <section class="bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
+      <h2 class="font-bold text-[#00193c] mb-4 flex items-center gap-2"><span class="material-symbols-outlined">edit</span>Atualizar</h2>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Data de Distribuição</label>
+          <input id="ed-distrib" type="date" value="${projeto.data_distribuicao?.split('T')[0]||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Data Saída Diretoria</label>
+          <input id="ed-saida" type="date" value="${projeto.data_saida_diretoria?.split('T')[0]||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Data de Pausa</label>
+          <input id="ed-pausa" type="date" value="${projeto.data_pausa?.split('T')[0]||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Motivo da Pausa</label>
+          <input id="ed-motivo" type="text" value="${projeto.motivo_pausa||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+        <div class="col-span-2"><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Principais Apontamentos</label>
+          <textarea id="ed-aponts" rows="3" class="w-full bg-slate-50 rounded-xl border-none px-3 py-2 text-sm">${projeto.principais_apontamentos||''}</textarea></div>
+        <div class="col-span-2"><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Observações da Gerência</label>
+          <textarea id="ed-obs" rows="2" class="w-full bg-slate-50 rounded-xl border-none px-3 py-2 text-sm">${projeto.observacoes_gerencia||''}</textarea></div>
+      </div>
+      <div class="flex justify-end mt-4 items-center gap-3">
+        <span id="msg-salvo" class="text-emerald-600 text-sm font-bold hidden">✅ Salvo!</span>
+        <button onclick="salvar()" class="px-6 py-2 bg-[#00193c] text-white font-bold rounded-xl text-sm hover:opacity-90">Salvar</button>
+      </div>
+    </section>` : '';
+
+  const histHTML = historico.length
+    ? historico.map(h=>`<div class="bg-slate-50 p-4 rounded-xl border-l-4 border-[#00193c]">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-xs font-black text-[#00193c] uppercase">${h.usuario_nome||'Sistema'}</span>
+          <span class="text-xs text-slate-400">${API.formatarDataHora(h.criado_em)}</span>
+        </div>
+        <p class="text-sm text-slate-700">${h.texto}</p>
+        ${h.tipo&&h.tipo!=='comentario'?`<span class="mt-1 inline-block text-xs px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 font-bold">${h.tipo}</span>`:''}
+      </div>`).join('')
+    : '<p class="text-sm text-slate-400 text-center py-4">Nenhum comentário ainda.</p>';
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="mb-6">
+      <div class="flex flex-wrap items-center gap-2 mb-2">
+        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:${cor}20;color:${cor}">${semLabel}</span>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">${statusLabel}</span>
+        ${proximo?`<span class="text-xs text-slate-400">→ próximo: ${proximo}</span>`:''}
+      </div>
+      <h1 class="text-3xl font-black text-[#00193c]">${projeto.osc_nome}</h1>
+      <p class="text-slate-400 mt-1">${projeto.tipo_demanda} · Recebido: ${API.formatarData(projeto.data_recebimento)}</p>
+    </div>
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 lg:col-span-8 space-y-6">
+        <!-- Info -->
+        <section class="bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
+          <h2 class="font-bold text-[#00193c] mb-4">Informações Gerais</h2>
+          <div class="grid grid-cols-3 gap-4">
+            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Analista</p><p class="text-sm font-semibold">${projeto.analista_nome||'—'}</p></div>
+            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gestor</p><p class="text-sm font-semibold">${projeto.gestor_nome||'—'}</p></div>
+            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Prazo</p><p class="text-sm font-semibold">${projeto.prazo_dias||7} dias úteis</p></div>
+            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Distribuição</p><p class="text-sm font-semibold">${API.formatarData(projeto.data_distribuicao)}</p></div>
+            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Data Prevista</p><p class="text-sm font-semibold">${API.formatarData(projeto.data_prevista)}</p></div>
+            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Saída Diretoria</p><p class="text-sm font-semibold">${API.formatarData(projeto.data_saida_diretoria)}</p></div>
+            ${projeto.principais_apontamentos?`<div class="col-span-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Apontamentos</p><p class="text-sm">${projeto.principais_apontamentos}</p></div>`:''}
+            ${projeto.observacoes_gerencia?`<div class="col-span-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Obs. Gerência</p><p class="text-sm">${projeto.observacoes_gerencia}</p></div>`:''}
+          </div>
+        </section>
+        ${editFields}
+        <!-- Comentário -->
+        <section class="bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
+          <h2 class="font-bold text-[#00193c] mb-4 flex items-center gap-2"><span class="material-symbols-outlined">add_comment</span>Novo Comentário</h2>
+          <textarea id="novo-comentario" rows="4" placeholder="Observações ou atualizações..." class="w-full bg-slate-50 rounded-xl border-none p-4 text-sm"></textarea>
+          <div class="flex justify-end mt-3">
+            <button onclick="enviarComentario()" class="px-8 py-2.5 bg-[#00193c] text-white font-bold rounded-xl text-sm hover:opacity-90">Enviar</button>
+          </div>
+        </section>
+      </div>
+      <!-- Sidebar direita -->
+      <div class="col-span-12 lg:col-span-4 space-y-6">
+        <!-- Semáforo -->
+        <section class="bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
+          <h3 class="text-xs font-black text-[#00193c] uppercase tracking-widest mb-4">Situação do Prazo</h3>
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center font-black text-2xl text-white flex-shrink-0" style="background:${cor}">
+              ${projeto.semaforo?.dias!==null&&projeto.semaforo?.dias!==undefined?Math.abs(projeto.semaforo.dias):'—'}
+            </div>
+            <div>
+              <p class="font-bold text-[#00193c] text-sm">${semLabel}</p>
+              <p class="text-xs text-slate-400 mt-1">${projeto.semaforo?.cor==='VERDE'?'Dentro do prazo':projeto.semaforo?.cor==='AMARELO'?'Atenção':projeto.semaforo?.cor==='VERMELHO'?'Crítico':projeto.semaforo?.cor==='VENCIDO'?'Vencido':'Aguardando'}</p>
+            </div>
+          </div>
+        </section>
+        <!-- Histórico -->
+        <section class="bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
+          <h3 class="text-xs font-black text-[#00193c] uppercase tracking-widest mb-4">Histórico de Atendimento</h3>
+          <div id="hist-container" class="space-y-3">${histHTML}</div>
+        </section>
+      </div>
+    </div>`;
+}
+
+async function tramitar() {
+  const fluxo = {EM_ANALISE:'GFCAP',GFCAP:'OSC',OSC:'FINALIZADO'};
+  const prox = fluxo[projeto.status];
+  if (!prox || !confirm(`Tramitar para "${prox}"?`)) return;
+  try {
+    await API.tramitarProjeto(pid);
+    await carregar();
+  } catch(e) { alert(e.message); }
+}
+
+async function salvar() {
+  try {
+    await API.atualizarProjeto(pid, {
+      data_distribuicao: document.getElementById('ed-distrib').value||null,
+      data_saida_diretoria: document.getElementById('ed-saida').value||null,
+      data_pausa: document.getElementById('ed-pausa').value||null,
+      motivo_pausa: document.getElementById('ed-motivo').value||null,
+      principais_apontamentos: document.getElementById('ed-aponts').value||null,
+      observacoes_gerencia: document.getElementById('ed-obs').value||null,
+    });
+    const msg = document.getElementById('msg-salvo');
+    msg.classList.remove('hidden');
+    setTimeout(()=>msg.classList.add('hidden'),3000);
+    await carregar();
+  } catch(e) { alert(e.message); }
+}
+
+async function enviarComentario() {
+  const txt = document.getElementById('novo-comentario')?.value?.trim();
+  if (!txt) return;
+  try {
+    await API.adicionarComentario(pid, txt);
+    document.getElementById('novo-comentario').value='';
+    await carregar();
+  } catch(e) { alert(e.message); }
+}
+
+init();
 </script>
-</body>
-</html>
+</body></html>

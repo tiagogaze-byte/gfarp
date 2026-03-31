@@ -1,244 +1,160 @@
 <!DOCTYPE html>
-<html class="light" lang="pt-br">
+<html lang="pt-br">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Dashboard — Gestão de Demandas</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-tailwind.config = {
-  darkMode: "class",
-  theme: { extend: {
-    colors: {
-      "surface-variant":"#e1e3e4","primary-fixed-dim":"#abc7ff","on-secondary-container":"#4a6774",
-      "on-error":"#ffffff","on-primary":"#ffffff","error":"#ba1a1a","on-primary-container":"#7796d1",
-      "surface":"#f8f9fa","tertiary-fixed":"#83fc8e","surface-container-high":"#e7e8e9",
-      "secondary":"#466270","surface-container-lowest":"#ffffff","on-surface-variant":"#43474f",
-      "primary":"#00193c","error-container":"#ffdad6","surface-container-low":"#f3f4f5",
-      "on-background":"#191c1d","on-surface":"#191c1d","primary-fixed":"#d7e2ff",
-      "on-secondary":"#ffffff","on-tertiary-container":"#2eac49","surface-container":"#edeeef",
-      "secondary-fixed":"#c9e7f7","outline-variant":"#c4c6d1","primary-container":"#002d62",
-      "surface-dim":"#d9dadb","background":"#f8f9fa","outline":"#747781","secondary-container":"#c6e4f4"
-    },
-    fontFamily: { headline:["Inter"], body:["Inter"], label:["Inter"] },
-    borderRadius: { DEFAULT:"0.125rem", lg:"0.5rem", xl:"0.75rem", full:"9999px" }
-  }}
-}
-</script>
 <style>
-.material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; vertical-align:middle; }
-.bg-primary-gradient { background: linear-gradient(135deg,#00193c 0%,#002d62 100%); }
-@keyframes pulse-shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
-.skeleton { background:linear-gradient(90deg,#edeeef 25%,#f3f4f5 50%,#edeeef 75%); background-size:200% 100%; animation:pulse-shimmer 1.5s infinite linear; }
+body{font-family:'Inter',sans-serif;}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle;}
 </style>
 </head>
-<body class="bg-surface font-body text-on-surface antialiased">
-
-<!-- Sidebar -->
-<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50">
-  <div class="mb-10 px-2">
-    <span class="text-xl font-black tracking-tighter text-[#00193c]">Gestão de Demandas</span>
-    <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1 opacity-70">Sistema GFARP</p>
-  </div>
-  <nav class="flex-1 space-y-1">
-    <a href="/index.html" class="flex items-center gap-3 px-4 py-3 bg-white text-[#00193c] shadow-sm font-bold border-r-4 border-[#00193c] rounded-sm">
-      <span class="material-symbols-outlined">dashboard</span>
-      <span class="text-sm font-medium">Dashboard</span>
-    </a>
-    <a href="/projetos.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#00193c] hover:bg-slate-100 transition-colors">
-      <span class="material-symbols-outlined">assignment</span>
-      <span class="text-sm font-medium">Projetos</span>
-    </a>
-    <a href="/usuarios.html" id="link-usuarios" class="hidden items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#00193c] hover:bg-slate-100 transition-colors">
-      <span class="material-symbols-outlined">group</span>
-      <span class="text-sm font-medium">Usuários</span>
-    </a>
-    <a href="/relatorios.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#00193c] hover:bg-slate-100 transition-colors">
-      <span class="material-symbols-outlined">assessment</span>
-      <span class="text-sm font-medium">Relatórios</span>
-    </a>
-  </nav>
-  <div class="mt-auto pt-6 border-t border-slate-100">
-    <button onclick="API.logout()" class="w-full bg-primary-gradient text-white py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90">
-      <span class="material-symbols-outlined text-sm">logout</span>Sair
-    </button>
-    <div class="flex items-center gap-3 mt-6 px-2">
-      <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm" id="avatar-inicial">?</div>
-      <div class="overflow-hidden">
-        <p class="text-sm font-bold text-primary truncate" id="sidebar-nome">...</p>
-        <p class="text-xs text-on-surface-variant" id="sidebar-papel">...</p>
-      </div>
-    </div>
-  </div>
-</aside>
-
-<!-- TopBar -->
-<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 flex justify-between items-center h-16 px-8">
-  <div class="relative w-full max-w-md">
-    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
-    <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20" placeholder="Buscar projetos ou demandas..." type="text"/>
-  </div>
-  <div class="flex items-center gap-4">
-    <button onclick="API.exportarCSV()" class="px-4 py-2 bg-surface-container-high rounded-lg text-sm font-bold text-primary hover:bg-surface-variant">Exportar Dados</button>
-    <button onclick="init()" class="px-4 py-2 bg-primary-gradient text-white rounded-lg text-sm font-bold">Atualizar Vista</button>
+<body class="bg-slate-50 text-slate-800">
+<aside id="sidebar" class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50 border-r border-slate-100"></aside>
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-white/90 backdrop-blur-md z-40 border-b border-slate-100 flex items-center justify-between px-8">
+  <h1 class="text-lg font-black text-[#00193c]">Dashboard Central</h1>
+  <div class="flex gap-2">
+    <button onclick="API.exportarCSV()" class="px-4 py-2 bg-slate-100 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-200">Exportar CSV</button>
+    <button onclick="init()" class="px-4 py-2 bg-[#00193c] text-white rounded-lg text-sm font-bold hover:opacity-90">Atualizar</button>
   </div>
 </header>
-
-<!-- Main -->
-<main class="ml-64 pt-24 pb-12 px-10 min-h-screen">
-  <header class="mb-10">
-    <h1 class="text-[2.25rem] font-black tracking-tight text-primary leading-tight">Dashboard Central</h1>
-    <p class="text-on-surface-variant mt-2 font-medium">Bem-vindo de volta. Aqui está o resumo das suas operações hoje.</p>
-  </header>
-
+<main class="ml-64 pt-24 pb-12 px-8 min-h-screen">
   <!-- KPIs -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.04)]" id="card-total">
-      <div class="flex justify-between items-start mb-4">
-        <div class="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary">
-          <span class="material-symbols-outlined text-2xl">folder_managed</span>
-        </div>
-        <span class="text-[10px] font-bold text-on-surface-variant bg-surface-container-low px-2 py-1 rounded" id="badge-total">...</span>
-      </div>
-      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total de Projetos</p>
-      <h3 class="text-3xl font-black text-primary mb-4" id="val-total">--</h3>
-      <div class="h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
-        <div class="h-full bg-primary w-0 transition-all duration-1000" id="progress-total"></div>
-      </div>
+  <div class="grid grid-cols-3 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+      <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total de Projetos</p>
+      <h3 class="text-4xl font-black text-[#00193c]" id="val-total">--</h3>
     </div>
-    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.04)]" id="card-open">
-      <div class="flex justify-between items-start mb-4">
-        <div class="w-12 h-12 bg-tertiary-fixed/20 rounded-full flex items-center justify-center text-on-tertiary-container">
-          <span class="material-symbols-outlined text-2xl">pending_actions</span>
-        </div>
-        <span class="text-[10px] font-bold text-on-tertiary-container bg-tertiary-fixed/30 px-2 py-1 rounded" id="badge-open">Ativos</span>
-      </div>
-      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Projetos em Aberto</p>
-      <h3 class="text-3xl font-black text-primary mb-4" id="val-open">--</h3>
-      <div class="h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
-        <div class="h-full bg-on-tertiary-container w-0 transition-all duration-1000" id="progress-open"></div>
-      </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+      <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Em Análise</p>
+      <h3 class="text-4xl font-black text-emerald-600" id="val-open">--</h3>
     </div>
-    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_32px_rgba(25,28,29,0.04)] border-l-4 border-error/20" id="card-delayed">
-      <div class="flex justify-between items-start mb-4">
-        <div class="w-12 h-12 bg-error-container rounded-full flex items-center justify-center text-error">
-          <span class="material-symbols-outlined text-2xl">warning</span>
-        </div>
-        <span class="text-[10px] font-bold text-error bg-error-container px-2 py-1 rounded" id="badge-delayed">Urgente</span>
-      </div>
-      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Projetos Atrasados</p>
-      <h3 class="text-3xl font-black text-error mb-4" id="val-delayed">--</h3>
-      <div class="h-1 w-full bg-surface-container-low rounded-full overflow-hidden">
-        <div class="h-full bg-error w-0 transition-all duration-1000" id="progress-delayed"></div>
-      </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-red-400">
+      <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Atrasados</p>
+      <h3 class="text-4xl font-black text-red-600" id="val-delayed">--</h3>
     </div>
   </div>
-
-  <!-- Tabela de demandas -->
-  <section class="bg-surface-container-lowest rounded-xl shadow-[0_8px_48px_rgba(25,28,29,0.03)] overflow-hidden">
-    <div class="p-8 flex justify-between items-center bg-surface-dim/20">
-      <div class="flex items-center gap-3">
-        <div class="w-1.5 h-6 bg-primary rounded-full"></div>
-        <h2 class="text-lg font-bold text-primary">Minhas Demandas Ativas</h2>
-      </div>
-      <a href="/projetos.html" class="text-sm font-bold text-primary hover:underline">Ver todas as demandas</a>
+  <!-- Tabela -->
+  <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="p-6 flex justify-between items-center border-b border-slate-50">
+      <h2 class="font-bold text-[#00193c]">Demandas Ativas</h2>
+      <a href="/projetos.html" class="text-sm font-bold text-[#00193c] hover:underline">Ver todas →</a>
     </div>
-    <div class="overflow-x-auto min-h-[200px]">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-surface-dim/40 border-b border-outline-variant/10">
-            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Código</th>
-            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">OSC / Demanda</th>
-            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Status</th>
-            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Prazo</th>
-            <th class="px-8 py-4 text-[10px] font-black uppercase tracking-widest text-on-surface-variant text-right">Ações</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-surface-container-low" id="projects-table-body">
-          <tr><td colspan="5" class="px-8 py-16 text-center text-on-surface-variant">Carregando...</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="p-6 border-t border-surface-container-low flex items-center justify-between text-xs font-bold text-on-surface-variant uppercase tracking-widest">
-      <span id="items-count-text">Exibindo ...</span>
-    </div>
-  </section>
+    <table class="w-full text-left">
+      <thead class="bg-slate-50">
+        <tr>
+          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Código</th>
+          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">OSC / Demanda</th>
+          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Status</th>
+          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Prazo</th>
+          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody" class="divide-y divide-slate-50">
+        <tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">Carregando...</td></tr>
+      </tbody>
+    </table>
+    <div class="px-6 py-3 border-t border-slate-50 text-xs text-slate-400" id="count-text"></div>
+  </div>
 </main>
+
+<!-- Modal Novo Projeto -->
+<div id="modal-projeto" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+  <div class="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl">
+    <h2 class="text-xl font-bold text-[#00193c] mb-6">Novo Projeto</h2>
+    <form id="form-projeto" class="space-y-4">
+      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tipo de Demanda</label>
+        <select name="tipo_demanda" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-[#00193c]/20">
+          <option value="">— Selecione —</option>
+          <option>PLANO DE TRABALHO</option>
+          <option>PRESTAÇÃO DE CONTAS</option>
+          <option>RELATÓRIO PARCIAL</option>
+          <option>ADITIVO</option>
+        </select>
+      </div>
+      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Nome da OSC / Instituição</label>
+        <input name="osc_nome" type="text" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-[#00193c]/20" placeholder="Nome completo da organização"/>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Data de Recebimento</label>
+          <input name="data_recebimento" type="date" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-[#00193c]/20"/>
+        </div>
+        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Prazo (dias úteis)</label>
+          <input name="prazo_dias" type="number" value="7" min="1" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-[#00193c]/20"/>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Gestor</label>
+          <select id="mp-opts-gestor" name="gestor_id" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-[#00193c]/20"></select>
+        </div>
+        <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Analista</label>
+          <select id="mp-opts-analista" name="analista_id" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm focus:ring-2 focus:ring-[#00193c]/20"></select>
+        </div>
+      </div>
+      <p id="mp-erro" class="text-red-500 text-sm"></p>
+      <div class="flex gap-3 pt-2">
+        <button type="button" onclick="fecharModalNovoProjeto()" class="flex-1 py-3 rounded-xl border border-slate-200 text-sm font-bold">Cancelar</button>
+        <button type="submit" class="flex-1 py-3 rounded-xl bg-[#00193c] text-white text-sm font-bold hover:opacity-90">Registrar Projeto</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script src="/public/js/api.js"></script>
 <script>
-  let usuarioAtual;
+async function init() {
+  const u = await protegerRota();
+  if (!u) return;
+  montarSidebar(u, 'dash');
 
-  async function init() {
-    usuarioAtual = await protegerRota();
-    if (!usuarioAtual) return;
+  // Botão Novo Projeto na sidebar
+  const btnNovo = document.createElement('button');
+  btnNovo.className = 'w-full mt-4 bg-[#00193c] text-white py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90';
+  btnNovo.innerHTML = '<span class="material-symbols-outlined text-sm">add</span>Novo Projeto';
+  btnNovo.onclick = abrirModalNovoProjeto;
+  document.getElementById('sidebar').querySelector('nav').after(btnNovo);
 
-    document.getElementById('sidebar-nome').textContent = usuarioAtual.nome;
-    document.getElementById('sidebar-papel').textContent = usuarioAtual.is_master ? 'Administrador' : 'Usuário';
-    document.getElementById('avatar-inicial').textContent = usuarioAtual.nome.charAt(0).toUpperCase();
+  try {
+    const [rel, proj] = await Promise.all([API.relatorio(), API.listarProjetos()]);
+    const t = rel.totais;
+    document.getElementById('val-total').textContent = t.total;
+    document.getElementById('val-open').textContent = t.em_analise;
+    document.getElementById('val-delayed').textContent = t.atrasados;
+    renderTabela(proj.slice(0,8));
+    document.getElementById('count-text').textContent = `Exibindo ${Math.min(8,proj.length)} de ${proj.length} projetos`;
+  } catch(e) { console.error(e); }
+}
 
-    if (usuarioAtual.is_master) {
-      document.getElementById('link-usuarios').classList.remove('hidden');
-      document.getElementById('link-usuarios').classList.add('flex');
-    }
+function renderTabela(lista) {
+  const tbody = document.getElementById('tbody');
+  if (!lista.length) { tbody.innerHTML='<tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">Nenhuma demanda encontrada.</td></tr>'; return; }
+  tbody.innerHTML = lista.map(p => {
+    const cor = API.semaforoCor(p.semaforo);
+    const label = API.semaforoLabel(p.semaforo);
+    const sl = API.statusLabel(p.status);
+    return `<tr class="hover:bg-slate-50 cursor-pointer" onclick="window.location='/projeto-detalhe.html?id=${p.id}'">
+      <td class="px-6 py-4 font-mono text-xs text-slate-400">${p.codigo}</td>
+      <td class="px-6 py-4"><p class="font-bold text-sm text-[#00193c]">${p.osc_nome}</p><p class="text-xs text-slate-400">${p.tipo_demanda}</p></td>
+      <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">${sl}</span></td>
+      <td class="px-6 py-4"><span class="text-xs font-bold px-2 py-1 rounded-full" style="background:${cor}20;color:${cor}">${label}</span></td>
+      <td class="px-6 py-4 text-right"><span class="material-symbols-outlined text-slate-400">arrow_forward</span></td>
+    </tr>`;
+  }).join('');
+}
 
-    await Promise.all([carregarStats(), carregarProjetos()]);
-  }
+document.getElementById('form-projeto').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const dados = Object.fromEntries(fd.entries());
+  try {
+    await API.criarProjeto(dados);
+    fecharModalNovoProjeto();
+    init();
+  } catch(err) { document.getElementById('mp-erro').textContent = err.message; }
+});
 
-  async function carregarStats() {
-    try {
-      const data = await API.relatorio();
-      const t = data.totais;
-      document.getElementById('val-total').textContent = String(t.total).padStart(2,'0');
-      document.getElementById('val-open').textContent = String(t.em_analise).padStart(2,'0');
-      document.getElementById('val-delayed').textContent = String(t.atrasados).padStart(2,'0');
-      document.getElementById('badge-total').textContent = '+este mês';
-      setTimeout(() => {
-        document.getElementById('progress-total').style.width = Math.min((t.total/200)*100,100)+'%';
-        document.getElementById('progress-open').style.width = Math.min((t.em_analise/100)*100,100)+'%';
-        document.getElementById('progress-delayed').style.width = Math.min((t.atrasados/50)*100,100)+'%';
-      }, 100);
-    } catch(err) { console.error('Stats:', err); }
-  }
-
-  async function carregarProjetos() {
-    const tbody = document.getElementById('projects-table-body');
-    const countEl = document.getElementById('items-count-text');
-    try {
-      const projetos = await API.listarProjetos();
-      if (!projetos.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="px-8 py-16 text-center text-on-surface-variant">Nenhuma demanda encontrada.</td></tr>';
-        if (countEl) countEl.textContent = 'Exibindo 0 demandas';
-        return;
-      }
-      const recentes = projetos.slice(0,8);
-      tbody.innerHTML = recentes.map((p,i) => {
-        const sem = p.semaforo || {};
-        const cor = API.semaforoCor(sem);
-        const label = API.semaforoLabel(sem);
-        const statusLabel = API.statusLabel(p.status);
-        let statusClass = 'bg-surface-container-high text-on-surface-variant';
-        if (p.status==='EM_ANALISE') statusClass='bg-tertiary-fixed/30 text-on-tertiary-container';
-        if (p.status==='GFCAP') statusClass='bg-secondary-container text-on-secondary-container';
-        if (p.status==='OSC') statusClass='bg-primary-fixed text-on-primary-fixed';
-        return `
-          <tr class="hover:bg-surface-container-low/50 transition-colors ${i%2!==0?'bg-surface-container-low/20':''}" style="cursor:pointer" onclick="window.location='/projeto-detalhe.html?id=${p.id}'">
-            <td class="px-8 py-5 text-sm font-mono text-on-surface-variant">${p.codigo}</td>
-            <td class="px-8 py-5"><div class="flex flex-col"><span class="text-sm font-bold text-primary">${p.osc_nome}</span><span class="text-xs text-on-surface-variant">${p.tipo_demanda}</span></div></td>
-            <td class="px-8 py-5"><div class="inline-flex items-center gap-2 px-3 py-1 ${statusClass} rounded-full"><div class="w-1.5 h-1.5 rounded-full" style="background:${cor}"></div><span class="text-xs font-bold">${statusLabel}</span></div></td>
-            <td class="px-8 py-5"><span class="text-xs font-bold px-2 py-1 rounded-full" style="background:${cor}20;color:${cor}">${label}</span></td>
-            <td class="px-8 py-5 text-right"><button class="p-2 hover:bg-surface-container-high rounded-lg text-primary"><span class="material-symbols-outlined">arrow_forward</span></button></td>
-          </tr>`;
-      }).join('');
-      if (countEl) countEl.textContent = `Exibindo ${recentes.length} de ${projetos.length} demandas`;
-    } catch(err) {
-      tbody.innerHTML = `<tr><td colspan="5" class="px-8 py-8 text-center text-error">${err.message}</td></tr>`;
-    }
-  }
-
-  init();
+init();
 </script>
-</body>
-</html>
+</body></html>

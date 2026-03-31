@@ -1,116 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Usuários — Demand System</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <script>
-    tailwind.config = {
-      theme: { extend: {
-        colors: {
-          primary: '#00193c', 'primary-container': '#002d62',
-          surface: '#f8f9fa', 'surface-container-low': '#f3f4f5',
-          'surface-container-lowest': '#ffffff', 'surface-dim': '#d9dadb',
-          'on-surface-variant': '#43474f', error: '#ba1a1a',
-          'error-container': '#ffdad6', 'on-tertiary-container': '#2eac49',
-          'tertiary-fixed': '#83fc8e', 'outline-variant': '#c4c6d1'
-        },
-        fontFamily: { body: ['Inter'] }
-      }}
-    }
-  </script>
-  <style>
-    .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; vertical-align:middle; }
-    .bg-gradient-primary { background: linear-gradient(135deg,#00193c 0%,#002d62 100%); }
-  </style>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Usuários — Gestão de Demandas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle;}</style>
 </head>
-<body class="bg-surface font-body text-on-surface min-h-screen">
-
-<!-- Sidebar -->
-<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50">
-  <div class="mb-10 px-2">
-    <span class="text-xl font-black tracking-tighter text-primary">Demand System</span>
-  </div>
-  <nav class="flex-1 space-y-1">
-    <a href="/index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-medium">
-      <span class="material-symbols-outlined">dashboard</span>Dashboard
-    </a>
-    <a href="/projetos.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-medium">
-      <span class="material-symbols-outlined">assignment</span>Projetos
-    </a>
-    <a href="/usuarios.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white text-primary shadow-sm font-bold border-r-4 border-primary text-sm">
-      <span class="material-symbols-outlined">group</span>Usuários
-    </a>
-    <a href="/relatorios.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 text-sm font-medium">
-      <span class="material-symbols-outlined">assessment</span>Relatórios
-    </a>
-  </nav>
-  <div class="mt-auto pt-6 border-t border-slate-100">
-    <button onclick="API.logout()" class="w-full text-left px-3 py-2 text-sm text-slate-500 hover:text-error transition-colors">
-      <span class="material-symbols-outlined">logout</span> Sair
-    </button>
-  </div>
-</aside>
-
-<!-- Main -->
-<main class="ml-64 p-8 pt-10">
-  <div class="flex justify-between items-end mb-8">
-    <div>
-      <h1 class="text-4xl font-black tracking-tight text-primary">Gestão de Usuários</h1>
-      <p class="text-on-surface-variant font-medium mt-1">Gerencie analistas, gestores e administradores.</p>
-    </div>
-    <button onclick="abrirModal()" class="bg-gradient-primary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center gap-2">
-      <span class="material-symbols-outlined">person_add</span>Novo Usuário
-    </button>
-  </div>
-
-  <!-- Tabela -->
-  <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+<body class="bg-slate-50 text-slate-800">
+<aside id="sidebar" class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50 border-r border-slate-100"></aside>
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-white/90 backdrop-blur-md z-40 border-b border-slate-100 flex items-center justify-between px-8">
+  <h1 class="text-lg font-black text-[#00193c]">Usuários</h1>
+  <button onclick="abrirModal()" class="px-4 py-2 bg-[#00193c] text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:opacity-90">
+    <span class="material-symbols-outlined text-sm">person_add</span>Novo Usuário
+  </button>
+</header>
+<main class="ml-64 pt-24 pb-12 px-8 min-h-screen">
+  <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
     <table class="w-full text-left">
-      <thead class="bg-surface-dim">
+      <thead class="bg-slate-50">
         <tr>
-          <th class="px-6 py-4 text-xs font-black uppercase tracking-widest text-primary">Nome</th>
-          <th class="px-6 py-4 text-xs font-black uppercase tracking-widest text-primary">Email</th>
-          <th class="px-6 py-4 text-xs font-black uppercase tracking-widest text-primary">Perfil</th>
-          <th class="px-6 py-4 text-xs font-black uppercase tracking-widest text-primary text-center">Projetos Ativos</th>
-          <th class="px-6 py-4 text-xs font-black uppercase tracking-widest text-primary text-right">Ações</th>
+          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Nome</th>
+          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Email</th>
+          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Perfil</th>
+          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400 text-center">Proj. Ativos</th>
+          <th class="px-6 py-3"></th>
         </tr>
       </thead>
-      <tbody id="tabela-usuarios" class="divide-y divide-slate-50">
-        <tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">Carregando...</td></tr>
+      <tbody id="tbody" class="divide-y divide-slate-50">
+        <tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">Carregando...</td></tr>
       </tbody>
     </table>
   </div>
 </main>
 
-<!-- Modal Novo Usuário -->
 <div id="modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
   <div class="bg-white rounded-xl p-8 w-full max-w-md shadow-xl">
-    <h2 class="text-xl font-bold text-primary mb-6">Novo Usuário</h2>
+    <h2 class="text-xl font-bold text-[#00193c] mb-6">Novo Usuário</h2>
     <form id="form-usuario" class="space-y-4">
-      <div>
-        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Nome completo</label>
-        <input name="nome" type="text" required class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20" placeholder="Nome do usuário"/>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Email</label>
-        <input name="email" type="email" required class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20" placeholder="email@sistema.com"/>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Senha inicial</label>
-        <input name="senha" type="password" required minlength="6" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20" placeholder="Mínimo 6 caracteres"/>
-      </div>
+      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Nome completo</label>
+        <input name="nome" type="text" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"/></div>
+      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Email</label>
+        <input name="email" type="email" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"/></div>
+      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Senha inicial</label>
+        <input name="senha" type="password" required minlength="6" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"/></div>
       <div class="flex items-center gap-3">
         <input name="is_master" type="checkbox" id="is_master" class="rounded"/>
-        <label for="is_master" class="text-sm text-on-surface-variant">Perfil Administrador (MASTER)</label>
+        <label for="is_master" class="text-sm text-slate-500">Administrador (acesso total)</label>
       </div>
-      <div id="erro-modal" class="hidden text-error text-sm"></div>
+      <p id="erro" class="text-red-500 text-sm"></p>
       <div class="flex gap-3 pt-2">
-        <button type="button" onclick="fecharModal()" class="flex-1 py-3 rounded-xl border border-outline-variant/30 text-sm font-bold">Cancelar</button>
-        <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-primary text-white text-sm font-bold">Criar Usuário</button>
+        <button type="button" onclick="fecharModal()" class="flex-1 py-3 rounded-xl border border-slate-200 text-sm font-bold">Cancelar</button>
+        <button type="submit" class="flex-1 py-3 rounded-xl bg-[#00193c] text-white text-sm font-bold hover:opacity-90">Criar</button>
       </div>
     </form>
   </div>
@@ -118,89 +60,52 @@
 
 <script src="/public/js/api.js"></script>
 <script>
-  let usuarioAtual;
+async function init() {
+  const u = await protegerRota();
+  if (!u) return;
+  if (!u.is_master) { window.location.href='/index.html'; return; }
+  montarSidebar(u, 'user');
+  await carregar();
+}
 
-  async function init() {
-    usuarioAtual = await protegerRota();
-    if (!usuarioAtual || !usuarioAtual.is_master) {
-      document.querySelector('main').innerHTML = '<div class="text-center py-20 text-on-surface-variant">Acesso restrito a administradores.</div>';
-      return;
-    }
-    await carregarUsuarios();
-  }
+async function carregar() {
+  const tbody = document.getElementById('tbody');
+  try {
+    const lista = await API.listarUsuarios();
+    if (!lista.length) { tbody.innerHTML='<tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">Nenhum usuário.</td></tr>'; return; }
+    tbody.innerHTML = lista.map(u=>`<tr class="hover:bg-slate-50">
+      <td class="px-6 py-4 font-semibold text-sm text-[#00193c]">${u.nome}</td>
+      <td class="px-6 py-4 text-sm text-slate-400">${u.email}</td>
+      <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${u.is_master?'bg-[#00193c] text-white':'bg-slate-100 text-slate-600'}">${u.is_master?'MASTER':'PADRÃO'}</span></td>
+      <td class="px-6 py-4 text-center text-sm">
+        <span title="Analista">📋 ${u.projetos_ativos_analista||0}</span> &nbsp;
+        <span title="Gestor">👤 ${u.projetos_ativos_gestor||0}</span>
+      </td>
+      <td class="px-6 py-4 text-right">
+        <button onclick="desativar(${u.id},'${u.nome}')" class="text-xs font-bold text-red-500 hover:underline">Desativar</button>
+      </td>
+    </tr>`).join('');
+  } catch(e) { tbody.innerHTML=`<tr><td colspan="5" class="px-6 py-8 text-center text-red-500">${e.message}</td></tr>`; }
+}
 
-  async function carregarUsuarios() {
-    const tbody = document.getElementById('tabela-usuarios');
-    try {
-      const usuarios = await API.listarUsuarios();
-      if (usuarios.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">Nenhum usuário encontrado.</td></tr>';
-        return;
-      }
-      tbody.innerHTML = usuarios.map((u, i) => `
-        <tr class="hover:bg-surface-container-low/50 transition-colors ${i%2===0?'':'bg-surface-container-low/20'}">
-          <td class="px-6 py-4 font-semibold text-sm text-primary">${u.nome}</td>
-          <td class="px-6 py-4 text-sm text-on-surface-variant">${u.email}</td>
-          <td class="px-6 py-4">
-            <span class="px-2 py-1 rounded-full text-xs font-bold ${u.is_master ? 'bg-primary text-white' : 'bg-surface-container-high text-on-surface-variant'}">
-              ${u.is_master ? 'MASTER' : 'PADRÃO'}
-            </span>
-          </td>
-          <td class="px-6 py-4 text-center text-sm">
-            <span title="Como analista">📋 ${u.projetos_ativos_analista || 0}</span>
-            &nbsp;
-            <span title="Como gestor">👤 ${u.projetos_ativos_gestor || 0}</span>
-          </td>
-          <td class="px-6 py-4 text-right">
-            <button onclick="desativar(${u.id}, '${u.nome}')" class="text-xs font-bold text-error hover:underline">Desativar</button>
-          </td>
-        </tr>
-      `).join('');
-    } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-error">${err.message}</td></tr>`;
-    }
-  }
+function abrirModal() { document.getElementById('modal').classList.remove('hidden'); document.getElementById('erro').textContent=''; document.getElementById('form-usuario').reset(); }
+function fecharModal() { document.getElementById('modal').classList.add('hidden'); }
 
-  function abrirModal() {
-    document.getElementById('modal').classList.remove('hidden');
-    document.getElementById('erro-modal').classList.add('hidden');
-    document.getElementById('form-usuario').reset();
-  }
+document.getElementById('form-usuario').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  try {
+    await API.criarUsuario({ nome:fd.get('nome'), email:fd.get('email'), senha:fd.get('senha'), is_master:!!fd.get('is_master') });
+    fecharModal();
+    carregar();
+  } catch(err) { document.getElementById('erro').textContent=err.message; }
+});
 
-  function fecharModal() {
-    document.getElementById('modal').classList.add('hidden');
-  }
+async function desativar(id, nome) {
+  if (!confirm(`Desativar "${nome}"?`)) return;
+  try { await API.desativarUsuario(id); carregar(); } catch(e) { alert(e.message); }
+}
 
-  document.getElementById('form-usuario').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const erroEl = document.getElementById('erro-modal');
-    try {
-      await API.criarUsuario({
-        nome: form.nome.value,
-        email: form.email.value,
-        senha: form.senha.value,
-        is_master: form.is_master.checked
-      });
-      fecharModal();
-      await carregarUsuarios();
-    } catch (err) {
-      erroEl.textContent = err.message;
-      erroEl.classList.remove('hidden');
-    }
-  });
-
-  async function desativar(id, nome) {
-    if (!confirm(`Desativar o usuário "${nome}"? Ele não conseguirá mais acessar o sistema.`)) return;
-    try {
-      await API.desativarUsuario(id);
-      await carregarUsuarios();
-    } catch (err) {
-      alert(err.message);
-    }
-  }
-
-  init();
+init();
 </script>
-</body>
-</html>
+</body></html>
