@@ -13,8 +13,14 @@ function getPool() {
 }
 
 async function query(text, params) {
-  const client = getPool();
-  return client.query(text, params);
+  const pool = getPool();
+  const client = await pool.connect();
+  try {
+    const result = await client.query(text, params);
+    return result;
+  } finally {
+    client.release();
+  }
 }
 
 module.exports = { query };
