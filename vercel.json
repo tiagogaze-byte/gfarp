@@ -1,6 +1,12 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/api/projetos/:id/historico", "destination": "/api/projetos/historico?id=:id" },
+    { "source": "/api/projetos/:id", "destination": "/api/projetos/[id]?id=:id" },
+    { "source": "/api/projetos", "destination": "/api/projetos/index" },
+    { "source": "/api/auth/:path", "destination": "/api/auth/:path" },
+    { "source": "/api/usuarios/:id", "destination": "/api/usuarios/[id]?id=:id" },
+    { "source": "/api/usuarios", "destination": "/api/usuarios/index" },
+    { "source": "/api/relatorios", "destination": "/api/relatorios/index" },
     { "source": "/login.html", "destination": "/public/login.html" },
     { "source": "/index.html", "destination": "/public/index.html" },
     { "source": "/projetos.html", "destination": "/public/projetos.html" },
@@ -8,7 +14,6 @@
     { "source": "/usuarios.html", "destination": "/public/usuarios.html" },
     { "source": "/relatorios.html", "destination": "/public/relatorios.html" },
     { "source": "/js/:file", "destination": "/public/js/:file" },
-    { "source": "/styles/:file", "destination": "/public/styles/:file" },
     { "source": "/", "destination": "/public/login.html" }
   ]
 }
