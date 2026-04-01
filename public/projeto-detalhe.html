@@ -20,52 +20,88 @@
   <div class="flex justify-center py-20 text-slate-400 text-sm">Carregando...</div>
 </main>
 
+<!-- Modal Exportar -->
+<div id="modal-exportar" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+    <h2 class="text-lg font-bold text-[#00193c] mb-2">Exportar Relatório</h2>
+    <p class="text-xs text-slate-400 mb-5">Selecione o que incluir no CSV deste projeto:</p>
+    <div class="space-y-2 mb-5">
+      <label class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 cursor-pointer hover:bg-slate-100">
+        <input type="checkbox" id="exp-info" checked class="rounded"/> <span class="text-sm font-medium">Informações gerais (OSC, tipo, datas, responsáveis)</span>
+      </label>
+      <label class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 cursor-pointer hover:bg-slate-100">
+        <input type="checkbox" id="exp-hist" checked class="rounded"/> <span class="text-sm font-medium">Histórico de atendimento completo</span>
+      </label>
+      <label class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 cursor-pointer hover:bg-slate-100">
+        <input type="checkbox" id="exp-tram" class="rounded"/> <span class="text-sm font-medium">Histórico de tramitação</span>
+      </label>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="fecharExportar()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-bold">Cancelar</button>
+      <button onclick="confirmarExportar()" class="flex-1 py-2.5 rounded-xl bg-[#00193c] text-white text-sm font-bold hover:opacity-90 flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-sm">download</span>Baixar CSV
+      </button>
+    </div>
+  </div>
+</div>
+
 <script src="/js/api.js"></script>
 <script>
-const pid=new URLSearchParams(window.location.search).get('id');
-let _u,_projeto,_hist=[];
+const pid = new URLSearchParams(window.location.search).get('id');
+let _u, _projeto, _hist = [];
 
-document.addEventListener('click',e=>{
-  if(!document.getElementById('tramitar-wrap')?.contains(e.target))
+// Converte Date ou string para YYYY-MM-DD com segurança
+function toDateInput(val) {
+  if (!val) return '';
+  if (typeof val === 'string') return val.split('T')[0];
+  if (val instanceof Date) return val.toISOString().split('T')[0];
+  return String(val).split('T')[0];
+}
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('tramitar-wrap')?.contains(e.target))
     document.getElementById('menu-tramitar')?.classList.remove('open');
 });
 
-async function init(){
-  _u=await protegerRota();if(!_u)return;
-  montarSidebar(_u,'proj');
-  if(!pid){renderErro('ID não informado.');return;}
+async function init() {
+  _u = await protegerRota(); if (!_u) return;
+  montarSidebar(_u, 'proj');
+  if (!pid) { renderErro('ID não informado.'); return; }
   await carregar();
 }
 
-async function carregar(){
-  try{
-    [_projeto,_hist]=await Promise.all([API.buscarProjeto(pid),API.listarHistorico(pid)]);
-    if(!_projeto){renderErro('Projeto não encontrado.');return;}
+async function carregar() {
+  try {
+    [_projeto, _hist] = await Promise.all([API.buscarProjeto(pid), API.listarHistorico(pid)]);
+    if (!_projeto) { renderErro('Projeto não encontrado.'); return; }
     render();
-  }catch(e){renderErro(e.message);}
+  } catch(e) { renderErro(e.message); }
 }
 
-function renderErro(msg){
-  document.getElementById('main').innerHTML=`<div class="text-center py-20"><p class="text-red-500 font-bold mb-4">${msg}</p><a href="/projetos.html" class="text-[#00193c] text-sm font-bold hover:underline">← Voltar</a></div>`;
+function renderErro(msg) {
+  document.getElementById('main').innerHTML = `<div class="text-center py-20"><p class="text-red-500 font-bold mb-4">${msg}</p><a href="/projetos.html" class="text-[#00193c] text-sm font-bold hover:underline">← Voltar</a></div>`;
 }
 
-function podeEdit(){return isMasterUser(_u)||_projeto.gestor_id===_u.id||_projeto.analista_id===_u.id;}
-function isMaster(){return isMasterUser(_u);}
+function podeEdit() { return isMasterUser(_u) || _projeto.gestor_id === _u.id || _projeto.analista_id === _u.id; }
+function isMaster() { return isMasterUser(_u); }
 
-function render(){
-  document.getElementById('hdr-codigo').textContent=_projeto.codigo;
-  const cor=API.semaforoCor(_projeto.semaforo);
+function render() {
+  document.getElementById('hdr-codigo').textContent = _projeto.codigo;
+  const cor = API.semaforoCor(_projeto.semaforo);
 
-  // Monta header de ações
-  let acoes='';
-  if(podeEdit()){
-    acoes+=`<button onclick="API.exportarCSVProjeto(${pid})" class="px-3 py-1.5 bg-slate-100 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-200 flex items-center gap-1"><span class="material-symbols-outlined text-sm">download</span>Exportar</button>`;
-    if(_projeto.status!=='FINALIZADO'){
-      acoes+=`<div class="relative" id="tramitar-wrap">
+  // Header de ações
+  let acoes = '';
+  if (podeEdit()) {
+    acoes += `<button onclick="abrirExportar()" class="px-3 py-1.5 bg-slate-100 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-200 flex items-center gap-1"><span class="material-symbols-outlined text-sm">download</span>Exportar</button>`;
+    if (isMaster()) {
+      acoes += `<button onclick="apagarProjeto()" class="px-3 py-1.5 bg-red-50 rounded-lg text-xs font-bold text-red-500 hover:bg-red-100 flex items-center gap-1"><span class="material-symbols-outlined text-sm">delete</span>Apagar</button>`;
+    }
+    if (_projeto.status !== 'FINALIZADO') {
+      acoes += `<div class="relative" id="tramitar-wrap">
         <button onclick="document.getElementById('menu-tramitar').classList.toggle('open')" class="px-4 py-1.5 bg-[#00193c] text-white rounded-lg text-xs font-bold flex items-center gap-1.5 hover:opacity-90">
           <span class="material-symbols-outlined text-sm">swap_horiz</span>Tramitar<span class="material-symbols-outlined text-sm">expand_more</span>
         </button>
-        <div id="menu-tramitar" class="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-slate-200 z-50 w-48 overflow-hidden">
+        <div id="menu-tramitar" class="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-slate-200 z-50 w-52 overflow-hidden">
           <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Encaminhar para</p>
           <button onclick="tramitar('EM_ANALISE')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Em Análise</button>
           <button onclick="tramitar('GFCAP')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span>GFCAP</button>
@@ -75,20 +111,24 @@ function render(){
       </div>`;
     }
   }
-  document.getElementById('hdr-acoes').innerHTML=acoes;
+  document.getElementById('hdr-acoes').innerHTML = acoes;
 
-  // IJ — só master, só se finalizado
-  const ijSection=isMaster()&&_projeto.status==='FINALIZADO'?`
-    <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+  // IJ
+  const ijSection = isMaster() && _projeto.status === 'FINALIZADO' ? `
+    <section class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
       <h2 class="font-bold text-[#00193c] text-sm mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-sm">tag</span>Número IJ</h2>
       <div class="flex gap-3">
         <input id="ed-ij" type="text" value="${_projeto.ij||''}" placeholder="Informe o número IJ..." class="flex-1 bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/>
         <button onclick="salvarIJ()" class="px-5 py-2 bg-[#00193c] text-white font-bold rounded-xl text-xs hover:opacity-90">Salvar IJ</button>
       </div>
-    </div>` : (_projeto.ij ? `<div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Número IJ</p><p class="font-bold text-[#00193c]">${_projeto.ij}</p></div>` : '');
+    </section>` : (_projeto.ij ? `
+    <section class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Número IJ</p>
+      <p class="font-bold text-[#00193c] text-lg">${_projeto.ij}</p>
+    </section>` : '');
 
-  // Campos editáveis por master
-  const masterFields=isMaster()?`
+  // Campos master
+  const masterFields = isMaster() ? `
     <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 mt-3">
       <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">OSC / Instituição</label>
         <input id="ed-osc" type="text" value="${_projeto.osc_nome||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
@@ -98,28 +138,28 @@ function render(){
         </select></div>
       <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Gestor</label>
         <select id="ed-gestor" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"></select></div>
-      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Analista</label>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widests mb-1">Analista</label>
         <select id="ed-analista" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"></select></div>
       <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Data Distribuição</label>
-        <input id="ed-distrib" type="date" value="${_projeto.data_distribuicao?.split('T')[0]||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+        <input id="ed-distrib" type="date" value="${toDateInput(_projeto.data_distribuicao)}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
       <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Prazo (d.ú.)</label>
         <input id="ed-prazo" type="number" value="${_projeto.prazo_dias||7}" min="1" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
       <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saída Diretoria</label>
-        <input id="ed-saida" type="date" value="${_projeto.data_saida_diretoria?.split('T')[0]||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+        <input id="ed-saida" type="date" value="${toDateInput(_projeto.data_saida_diretoria)}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
       <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Obs. Gerência</label>
         <input id="ed-obs" type="text" value="${_projeto.observacoes_gerencia||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
     </div>` : '';
 
-  const editSection=podeEdit()?`
+  const editSection = podeEdit() ? `
     <section class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
       <h2 class="font-bold text-[#00193c] text-sm mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-sm">edit</span>Atualizar Projeto</h2>
       <div class="grid grid-cols-2 gap-3">
         <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Data de Pausa</label>
-          <input id="ed-pausa" type="date" value="${_projeto.data_pausa?.split('T')[0]||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+          <input id="ed-pausa" type="date" value="${toDateInput(_projeto.data_pausa)}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
         <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Motivo da Pausa</label>
           <input id="ed-motivo" type="text" value="${_projeto.motivo_pausa||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
         <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Data de Retomada</label>
-          <input id="ed-retomada" type="date" value="${_projeto.data_retomada?.split('T')[0]||''}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+          <input id="ed-retomada" type="date" value="${toDateInput(_projeto.data_retomada)}" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
         <div class="col-span-2"><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Principais Apontamentos</label>
           <textarea id="ed-aponts" rows="2" class="w-full bg-slate-50 rounded-xl border-none px-3 py-2 text-sm">${_projeto.principais_apontamentos||''}</textarea></div>
       </div>
@@ -130,8 +170,8 @@ function render(){
       </div>
     </section>` : '';
 
-  const histHTML=_hist.length?_hist.map(h=>{
-    const ic=API.tipoIcon(h.tipo),tc=API.tipoCor(h.tipo);
+  const histHTML = _hist.length ? _hist.map(h => {
+    const ic = API.tipoIcon(h.tipo_original||h.tipo), tc = API.tipoCor(h.tipo_original||h.tipo);
     return `<div class="flex gap-3">
       <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:${tc}15">
         <span class="material-symbols-outlined text-sm" style="color:${tc}">${ic}</span>
@@ -142,12 +182,11 @@ function render(){
           <span class="text-[10px] text-slate-400">${API.fmtHora(h.criado_em)}</span>
         </div>
         <p class="text-sm text-slate-700">${h.texto}</p>
-        ${h.tipo&&h.tipo!=='atendimento'?`<span class="mt-1 inline-block text-[10px] px-2 py-0.5 rounded-full font-bold" style="background:${tc}15;color:${tc}">${h.tipo}</span>`:''}
       </div>
     </div>`;
-  }).join(''):'<p class="text-sm text-slate-400 text-center py-4">Nenhum registro ainda.</p>';
+  }).join('') : '<p class="text-sm text-slate-400 text-center py-4">Nenhum registro ainda.</p>';
 
-  document.getElementById('main').innerHTML=`
+  document.getElementById('main').innerHTML = `
     <div class="mb-5">
       <div class="flex flex-wrap items-center gap-2 mb-2">
         <span class="px-2.5 py-1 rounded-full text-xs font-bold" style="background:${cor}15;color:${cor}">${API.semaforoLabel(_projeto.semaforo)}</span>
@@ -214,58 +253,80 @@ function render(){
       </div>
     </div>`;
 
-  // Popula dropdowns gestor/analista para master
-  if(isMaster()){
-    getUsuarios().then(lista=>{
-      const mk=(sel,val)=>{const e=document.getElementById(sel);if(!e)return;e.innerHTML='<option value="">— Nenhum —</option>'+lista.map(u=>`<option value="${u.id}" ${u.id==val?'selected':''}>${u.nome}</option>`).join('');};
-      mk('ed-gestor',_projeto.gestor_id);
-      mk('ed-analista',_projeto.analista_id);
+  if (isMaster()) {
+    getUsuarios().then(lista => {
+      const mk = (sel, val) => {
+        const e = document.getElementById(sel); if (!e) return;
+        e.innerHTML = '<option value="">— Nenhum —</option>' + lista.map(u=>`<option value="${u.id}" ${u.id==val?'selected':''}>${u.nome}</option>`).join('');
+      };
+      mk('ed-gestor', _projeto.gestor_id);
+      mk('ed-analista', _projeto.analista_id);
     });
   }
 }
 
-async function tramitar(destino){
+async function tramitar(destino) {
   document.getElementById('menu-tramitar')?.classList.remove('open');
-  if(!confirm(`Tramitar para "${API.statusLabel(destino)}"?`))return;
-  try{await API.tramitarProjeto(pid,destino);await carregar();}catch(e){alert(e.message);}
+  if (!confirm(`Tramitar para "${API.statusLabel(destino)}"?`)) return;
+  try { await API.tramitarProjeto(pid, destino); await carregar(); } catch(e) { alert(e.message); }
 }
 
-async function salvar(){
-  const d={
-    data_pausa:document.getElementById('ed-pausa')?.value||null,
-    motivo_pausa:document.getElementById('ed-motivo')?.value||null,
-    data_retomada:document.getElementById('ed-retomada')?.value||null,
-    principais_apontamentos:document.getElementById('ed-aponts')?.value||null,
+async function salvar() {
+  const d = {
+    data_pausa: document.getElementById('ed-pausa')?.value||null,
+    motivo_pausa: document.getElementById('ed-motivo')?.value||null,
+    data_retomada: document.getElementById('ed-retomada')?.value||null,
+    principais_apontamentos: document.getElementById('ed-aponts')?.value||null,
   };
-  if(isMaster()){
-    Object.assign(d,{
-      osc_nome:document.getElementById('ed-osc')?.value||null,
-      tipo_demanda:document.getElementById('ed-tipo')?.value||null,
-      gestor_id:document.getElementById('ed-gestor')?.value||null,
-      analista_id:document.getElementById('ed-analista')?.value||null,
-      data_distribuicao:document.getElementById('ed-distrib')?.value||null,
-      prazo_dias:document.getElementById('ed-prazo')?.value||null,
-      data_saida_diretoria:document.getElementById('ed-saida')?.value||null,
-      observacoes_gerencia:document.getElementById('ed-obs')?.value||null,
+  if (isMaster()) {
+    Object.assign(d, {
+      osc_nome: document.getElementById('ed-osc')?.value||null,
+      tipo_demanda: document.getElementById('ed-tipo')?.value||null,
+      gestor_id: document.getElementById('ed-gestor')?.value||null,
+      analista_id: document.getElementById('ed-analista')?.value||null,
+      data_distribuicao: document.getElementById('ed-distrib')?.value||null,
+      prazo_dias: document.getElementById('ed-prazo')?.value||null,
+      data_saida_diretoria: document.getElementById('ed-saida')?.value||null,
+      observacoes_gerencia: document.getElementById('ed-obs')?.value||null,
     });
   }
-  try{
-    await API.atualizarProjeto(pid,d);
-    const msg=document.getElementById('msg-salvo');if(msg){msg.classList.remove('hidden');setTimeout(()=>msg.classList.add('hidden'),3000);}
+  try {
+    await API.atualizarProjeto(pid, d);
+    const msg = document.getElementById('msg-salvo');
+    if (msg) { msg.classList.remove('hidden'); setTimeout(()=>msg.classList.add('hidden'),3000); }
     await carregar();
-  }catch(e){alert(e.message);}
+  } catch(e) { alert(e.message); }
 }
 
-async function salvarIJ(){
-  const ij=document.getElementById('ed-ij')?.value?.trim();
-  try{await API.atualizarProjeto(pid,{ij});await carregar();}catch(e){alert(e.message);}
+async function salvarIJ() {
+  const ij = document.getElementById('ed-ij')?.value?.trim();
+  try { await API.atualizarProjeto(pid, {ij}); await carregar(); } catch(e) { alert(e.message); }
 }
 
-async function enviarRegistro(){
-  const txt=document.getElementById('novo-reg')?.value?.trim();
-  const tipo=document.getElementById('tipo-reg')?.value||'atendimento';
-  if(!txt)return;
-  try{await API.adicionarRegistro(pid,txt,tipo);document.getElementById('novo-reg').value='';await carregar();}catch(e){alert(e.message);}
+async function enviarRegistro() {
+  const txt = document.getElementById('novo-reg')?.value?.trim();
+  const tipo = document.getElementById('tipo-reg')?.value || 'atendimento';
+  if (!txt) return;
+  try {
+    await API.adicionarRegistro(pid, txt, tipo);
+    document.getElementById('novo-reg').value = '';
+    await carregar();
+  } catch(e) { alert(e.message); }
+}
+
+async function apagarProjeto() {
+  if (!confirm(`⚠️ Apagar o projeto "${_projeto.codigo} — ${_projeto.osc_nome}"?\n\nEssa ação não pode ser desfeita. Todo o histórico será perdido.`)) return;
+  try {
+    await fetch('/api/projetos/' + pid, { method: 'DELETE' });
+    window.location.href = '/projetos.html';
+  } catch(e) { alert(e.message); }
+}
+
+function abrirExportar() { document.getElementById('modal-exportar').classList.remove('hidden'); }
+function fecharExportar() { document.getElementById('modal-exportar').classList.add('hidden'); }
+function confirmarExportar() {
+  fecharExportar();
+  API.exportarCSVProjeto(pid);
 }
 
 init();
