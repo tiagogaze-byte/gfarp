@@ -16,10 +16,18 @@ function calcularSemaforo(p) {
   return { cor: dias>=5?'VERDE':dias>=2?'AMARELO':dias===1?'VERMELHO':'VENCIDO', dias };
 }
 
-function calcularDiasUteis(inicio, fim) {
-  let count = 0, cur = new Date(inicio), end = new Date(fim);
-  while (cur < end) { cur.setDate(cur.getDate()+1); if(cur.getDay()!==0&&cur.getDay()!==6) count++; }
-  return count;
+// Converte Date ou string para YYYY-MM-DD com segurança
+function toDateStr(val) {
+  if (!val) return null;
+  if (typeof val === 'string') return val.split('T')[0];
+  if (val instanceof Date) return val.toISOString().split('T')[0];
+  return String(val).split('T')[0];
+}
+
+function calcDiasUteis(inicio, fim) {
+  let c=0, cur=new Date(inicio), end=new Date(fim);
+  while(cur<end){cur.setDate(cur.getDate()+1);if(cur.getDay()!==0&&cur.getDay()!==6)c++;}
+  return c;
 }
 
 module.exports = async function handler(req, res) {
@@ -39,8 +47,8 @@ module.exports = async function handler(req, res) {
     if (!pr.rows.length) return res.status(404).json({ erro: 'Projeto não encontrado' });
     const projeto = pr.rows[0];
 
-    const isResponsavel = projeto.gestor_id === usuario.id || projeto.analista_id === usuario.id;
-    if (!isMaster && !isResponsavel) return res.status(403).json({ erro: 'Sem permissão' });
+    const isResp = projeto.gestor_id === usuario.id || projeto.analista_id === usuario.id;
+    if (!isMaster && !isResp) return res.status(403).json({ erro: 'Sem permissão' });
 
     if (req.method === 'GET') {
       return res.status(200).json({ ...projeto, semaforo: calcularSemaforo(projeto) });
@@ -56,93 +64,85 @@ module.exports = async function handler(req, res) {
         observacoes_gerencia, ij
       } = req.body;
 
-      // Tramitar
       let novoStatus = status;
       if (acao === 'tramitar' && destino) novoStatus = destino;
 
-      // Log de alterações
-      const alteracoes = [];
-      if (novoStatus && novoStatus !== projeto.status) alteracoes.push(`Status: ${projeto.status} → ${novoStatus}`);
-      if (osc_nome && osc_nome !== projeto.osc_nome) alteracoes.push(`OSC: "${projeto.osc_nome}" → "${osc_nome}"`);
-      if (tipo_demanda && tipo_demanda !== projeto.tipo_demanda) alteracoes.push(`Tipo: ${projeto.tipo_demanda} → ${tipo_demanda}`);
-      if (data_distribuicao && data_distribuicao !== projeto.data_distribuicao?.split('T')[0]) alteracoes.push(`Distribuição: ${projeto.data_distribuicao||'—'} → ${data_distribuicao}`);
-      if (ij !== undefined && ij !== projeto.ij) alteracoes.push(`IJ: ${projeto.ij||'—'} → ${ij}`);
+      // Log alterações
+      const alts = [];
+      if (novoStatus && novoStatus !== projeto.status) alts.push(`Status: ${projeto.status} → ${novoStatus}`);
+      if (osc_nome && osc_nome !== projeto.osc_nome) alts.push(`OSC: "${projeto.osc_nome}" → "${osc_nome}"`);
+      if (tipo_demanda && tipo_demanda !== projeto.tipo_demanda) alts.push(`Tipo: ${projeto.tipo_demanda} → ${tipo_demanda}`);
+      if (ij !== undefined && ij !== projeto.ij) alts.push(`IJ: ${projeto.ij||'—'} → ${ij}`);
 
       // Registra tramitação
       if (novoStatus && novoStatus !== projeto.status) {
-        await query(
-          `INSERT INTO historico_tramitacao (projeto_id,usuario_id,status_anterior,status_novo) VALUES ($1,$2,$3,$4)`,
-          [id, usuario.id, projeto.status, novoStatus]
-        );
-        await query(
-          `INSERT INTO historico_atendimento (projeto_id,usuario_id,tipo,texto) VALUES ($1,$2,'tramitacao',$3)`,
-          [id, usuario.id, `Tramitado: ${projeto.status} → ${novoStatus} por ${usuario.nome}`]
-        );
+        await query(`INSERT INTO historico_tramitacao (projeto_id,usuario_id,status_anterior,status_novo) VALUES ($1,$2,$3,$4)`,
+          [id, usuario.id, projeto.status, novoStatus]);
+        await query(`INSERT INTO historico_atendimento (projeto_id,usuario_id,tipo,texto) VALUES ($1,$2,'tramitacao',$3)`,
+          [id, usuario.id, `Tramitado: ${projeto.status} → ${novoStatus} por ${usuario.nome}`]);
       }
 
-      // Registra log de alterações
-      if (alteracoes.length > 0) {
-        await query(
-          `INSERT INTO historico_atendimento (projeto_id,usuario_id,tipo,texto) VALUES ($1,$2,'observacao',$3)`,
-          [id, usuario.id, `Alterações realizadas: ${alteracoes.join(' | ')}`]
-        );
+      // Registra log
+      if (alts.length > 0) {
+        await query(`INSERT INTO historico_atendimento (projeto_id,usuario_id,tipo,texto) VALUES ($1,$2,'comentario',$3)`,
+          [id, usuario.id, `[LOG] Alterações: ${alts.join(' | ')}`]);
       }
 
-      // Calcula data_prevista se data_distribuicao fornecida
+      // Calcula data_prevista
       let dataPrevista = undefined;
-      if (data_distribuicao) {
+      const distrib = data_distribuicao || toDateStr(projeto.data_distribuicao);
+      if (data_distribuicao && distrib) {
         const p = parseInt(prazo_dias || projeto.prazo_dias || 7);
-        let count = 0, cur = new Date(data_distribuicao);
-        while (count < p) { cur.setDate(cur.getDate()+1); const d=cur.getDay(); if(d!==0&&d!==6) count++; }
+        let count = 0, cur = new Date(distrib);
+        while (count < p) { cur.setDate(cur.getDate()+1); if(cur.getDay()!==0&&cur.getDay()!==6) count++; }
         dataPrevista = cur.toISOString().split('T')[0];
       }
 
-      // Recalcula novo_prazo após retomada de pausa
+      // Calcula novo_prazo após retomada
       let novoPrazoCalc = novo_prazo;
-      if (data_retomada && projeto.data_pausa && !novo_prazo) {
-        const diasUsados = calcularDiasUteis(projeto.data_distribuicao||projeto.data_recebimento, projeto.data_pausa);
-        const diasRestantes = Math.max(0, (parseInt(prazo_dias||projeto.prazo_dias||7)) - diasUsados);
-        let count = 0, cur = new Date(data_retomada);
-        while (count < diasRestantes) { cur.setDate(cur.getDate()+1); if(cur.getDay()!==0&&cur.getDay()!==6) count++; }
-        novoPrazoCalc = cur.toISOString().split('T')[0];
+      if (data_retomada && !novo_prazo && projeto.data_pausa) {
+        const base = toDateStr(projeto.data_distribuicao) || toDateStr(projeto.data_recebimento);
+        const pausaStr = toDateStr(projeto.data_pausa);
+        if (base && pausaStr) {
+          const diasUsados = calcDiasUteis(base, pausaStr);
+          const diasRestantes = Math.max(0, (parseInt(prazo_dias||projeto.prazo_dias||7)) - diasUsados);
+          let count = 0, cur = new Date(data_retomada);
+          while (count < diasRestantes) { cur.setDate(cur.getDate()+1); if(cur.getDay()!==0&&cur.getDay()!==6) count++; }
+          novoPrazoCalc = cur.toISOString().split('T')[0];
+        }
       }
 
-      // Monta update dinâmico
       const campos = [], valores = []; let idx = 1;
-      const add = (campo, val) => { if (val !== undefined) { campos.push(`${campo}=$${idx++}`); valores.push(val===''?null:val); } };
+      const add = (campo, val) => {
+        if (val !== undefined && val !== null && val !== '') { campos.push(`${campo}=$${idx++}`); valores.push(val); }
+        else if (val === '') { campos.push(`${campo}=$${idx++}`); valores.push(null); }
+      };
 
       add('status', novoStatus);
-      // Campos que analista/gestor podem editar
       add('data_pausa', data_pausa);
       add('motivo_pausa', motivo_pausa);
       add('data_retomada', data_retomada);
-      add('principals_apontamentos', principais_apontamentos);
       add('principais_apontamentos', principais_apontamentos);
 
       if (isMaster) {
         add('osc_nome', osc_nome);
         add('tipo_demanda', tipo_demanda);
-        add('gestor_id', gestor_id);
-        add('analista_id', analista_id);
+        add('gestor_id', gestor_id || null);
+        add('analista_id', analista_id || null);
         add('data_distribuicao', data_distribuicao);
-        add('prazo_dias', prazo_dias ? parseInt(prazo_dias) : undefined);
+        if (prazo_dias) { campos.push(`prazo_dias=$${idx++}`); valores.push(parseInt(prazo_dias)); }
         if (dataPrevista) add('data_prevista', dataPrevista);
         add('data_saida_diretoria', data_saida_diretoria);
         add('observacoes_gerencia', observacoes_gerencia);
         add('novo_prazo', novoPrazoCalc);
-        // IJ só master, verifica se coluna existe
-        if (ij !== undefined) {
-          try { add('ij', ij); } catch(e) { /* coluna ainda não existe */ }
-        }
+        if (ij !== undefined) add('ij', ij);
       }
 
       campos.push('atualizado_em=NOW()');
-      // Remove duplicatas de campo
-      const camposUniq = [...new Set(campos)];
-      if (camposUniq.length <= 1) return res.status(400).json({ erro: 'Nenhum campo para atualizar' });
+      if (campos.length <= 1) return res.status(400).json({ erro: 'Nenhum campo para atualizar' });
 
       valores.push(id);
-      await query(`UPDATE projetos SET ${camposUniq.join(',')} WHERE id=$${idx}`, valores);
+      await query(`UPDATE projetos SET ${campos.join(',')} WHERE id=$${idx}`, valores);
 
       const nr = await query(
         `SELECT p.*,g.nome AS gestor_nome,a.nome AS analista_nome
@@ -152,7 +152,6 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      const papel = usuario.papel || (usuario.is_master ? 'MASTER' : 'PADRAO');
       if (papel !== 'MASTER') return res.status(403).json({ erro: 'Apenas MASTER pode excluir' });
       await query('DELETE FROM projetos WHERE id=$1', [id]);
       return res.status(200).json({ ok: true });
