@@ -1,33 +1,31 @@
 const bcrypt = require('bcryptjs');
 const { query } = require('../middleware/db');
-const { verificarToken, exigirMaster, handleError, handleCors } = require('../middleware/auth');
+const { verificarToken, handleError, handleCors } = require('../middleware/auth');
 
 module.exports = async function handler(req, res) {
   if (handleCors(req, res)) return;
   try {
     const usuario = verificarToken(req);
-    exigirMaster(usuario);
+    const papel = usuario.papel || (usuario.is_master ? 'MASTER' : 'PADRAO');
+    if (papel !== 'MASTER') return res.status(403).json({ erro: 'Acesso restrito a administradores' });
     const { id } = req.query;
 
     if (req.method === 'PATCH') {
-      const { nome, email, senha, papel, ativo } = req.body;
+      const { nome, email, senha, papel: novoPapel, ativo } = req.body;
       const campos = [], valores = []; let idx = 1;
       if (nome) { campos.push(`nome=$${idx++}`); valores.push(nome.trim()); }
       if (email) { campos.push(`email=$${idx++}`); valores.push(email.toLowerCase().trim()); }
-      if (senha) {
-        if (senha.length < 6) return res.status(400).json({ erro: 'Senha mínimo 6 caracteres' });
-        campos.push(`senha=$${idx++}`); valores.push(await bcrypt.hash(senha, 10));
-      }
-      if (papel) {
-        const papeis = ['MASTER','SUPERVISOR','PADRAO'];
-        if (!papeis.includes(papel)) return res.status(400).json({ erro: 'Papel inválido' });
-        campos.push(`papel=$${idx++}`); valores.push(papel);
-        campos.push(`is_master=$${idx++}`); valores.push(papel === 'MASTER');
+      if (senha && senha.length >= 6) { campos.push(`senha=$${idx++}`); valores.push(await bcrypt.hash(senha, 10)); }
+      if (novoPapel && ['MASTER','SUPERVISOR','PADRAO'].includes(novoPapel)) {
+        campos.push(`papel=$${idx++}`); valores.push(novoPapel);
+        campos.push(`is_master=$${idx++}`); valores.push(novoPapel === 'MASTER');
       }
       if (ativo !== undefined) { campos.push(`ativo=$${idx++}`); valores.push(Boolean(ativo)); }
       if (!campos.length) return res.status(400).json({ erro: 'Nada para atualizar' });
       valores.push(id);
-      const r = await query(`UPDATE usuarios SET ${campos.join(',')} WHERE id=$${idx} RETURNING id,nome,email,is_master,papel,ativo`, valores);
+      const r = await query(
+        `UPDATE usuarios SET ${campos.join(',')} WHERE id=$${idx}
+         RETURNING id,nome,email,is_master,COALESCE(papel,'PADRAO') AS papel,ativo`, valores);
       if (!r.rows.length) return res.status(404).json({ erro: 'Usuário não encontrado' });
       return res.status(200).json(r.rows[0]);
     }
