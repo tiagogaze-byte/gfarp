@@ -1,139 +1,139 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+<!DOCTYPE html><html lang="pt-br"><head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Relatórios — Gestão de Demandas</title>
+<title>Relatórios — GFARP</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle;}</style>
-</head>
-<body class="bg-slate-50 text-slate-800">
-<aside id="sidebar" class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50 border-r border-slate-100"></aside>
-<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-white/90 backdrop-blur-md z-40 border-b border-slate-100 flex items-center justify-between px-8">
-  <h1 class="text-lg font-black text-[#00193c]">Relatórios</h1>
-  <button onclick="exportar()" class="px-4 py-2 bg-[#00193c] text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:opacity-90">
+</head><body class="bg-slate-100 text-slate-800">
+<aside id="sidebar" class="h-screen w-60 fixed left-0 top-0 bg-slate-50 flex flex-col py-5 px-3 z-50 border-r border-slate-200"></aside>
+<header class="fixed top-0 right-0 w-[calc(100%-15rem)] h-14 bg-white z-40 border-b border-slate-200 flex items-center justify-between px-6">
+  <h1 class="font-black text-[#00193c]">Relatórios</h1>
+  <button onclick="exportar()" class="px-4 py-1.5 bg-[#00193c] text-white rounded-lg text-xs font-bold flex items-center gap-1.5 hover:opacity-90">
     <span class="material-symbols-outlined text-sm">download</span>Exportar CSV
   </button>
 </header>
-<main class="ml-64 pt-24 pb-12 px-8 min-h-screen">
+<main class="ml-60 pt-20 pb-10 px-6 min-h-screen">
   <!-- Totais -->
-  <div class="grid grid-cols-4 gap-4 mb-6">
-    <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p><h3 class="text-3xl font-black text-[#00193c]" id="t-total">--</h3></div>
-    <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Em Análise</p><h3 class="text-3xl font-black text-emerald-600" id="t-analise">--</h3></div>
-    <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Finalizados</p><h3 class="text-3xl font-black text-slate-400" id="t-final">--</h3></div>
-    <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm border-l-4 border-l-red-400"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Atrasados</p><h3 class="text-3xl font-black text-red-600" id="t-atraso">--</h3></div>
+  <div class="grid grid-cols-3 md:grid-cols-6 gap-3 mb-5">
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p><h3 class="text-3xl font-black text-[#00193c]" id="t-total">--</h3></div>
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Em Análise</p><h3 class="text-3xl font-black text-emerald-600" id="t-analise">--</h3></div>
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">GFCAP</p><h3 class="text-3xl font-black text-blue-600" id="t-gfcap">--</h3></div>
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">OSC</p><h3 class="text-3xl font-black text-purple-600" id="t-osc">--</h3></div>
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Finalizados</p><h3 class="text-3xl font-black text-slate-400" id="t-final">--</h3></div>
+    <div class="bg-white p-4 rounded-xl border-l-4 border-l-red-500 border border-slate-200 shadow-sm"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Atrasados</p><h3 class="text-3xl font-black text-red-600" id="t-atraso">--</h3></div>
   </div>
   <!-- Filtros -->
-  <div class="bg-white rounded-xl border border-slate-100 p-5 mb-6 flex flex-wrap gap-4 items-end">
-    <div class="flex-1 min-w-[140px]"><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Status</label>
-      <select id="f-status" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm">
-        <option value="">Todos</option>
-        <option value="EM_ANALISE">Em Análise</option><option value="GFCAP">GFCAP</option>
-        <option value="OSC">OSC</option><option value="FINALIZADO">Finalizado</option>
-      </select></div>
-    <div class="flex-1 min-w-[160px]"><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tipo</label>
-      <select id="f-tipo" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm">
-        <option value="">Todos</option>
-        <option>PLANO DE TRABALHO</option><option>PRESTAÇÃO DE CONTAS</option>
-        <option>RELATÓRIO PARCIAL</option><option>ADITIVO</option>
-      </select></div>
-    <div class="flex-1 min-w-[140px]"><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">De</label>
-      <input id="f-inicio" type="date" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
-    <div class="flex-1 min-w-[140px]"><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Até</label>
-      <input id="f-fim" type="date" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
-    <div class="flex gap-2">
-      <button onclick="filtrar()" class="px-5 py-2 bg-[#00193c] text-white rounded-lg text-sm font-bold hover:opacity-90">Filtrar</button>
-      <button onclick="limpar()" class="px-5 py-2 bg-slate-100 rounded-lg text-sm font-bold hover:bg-slate-200">Limpar</button>
+  <div class="bg-white rounded-xl border border-slate-200 p-4 mb-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status</label>
+        <select id="f-status" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm">
+          <option value="">Todos</option><option value="EM_ANALISE">Em Análise</option>
+          <option value="GFCAP">GFCAP</option><option value="OSC">OSC</option><option value="FINALIZADO">Finalizado</option>
+        </select></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tipo</label>
+        <select id="f-tipo" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm">
+          <option value="">Todos</option><option>PLANO DE TRABALHO</option><option>PRESTAÇÃO DE CONTAS</option>
+          <option>RELATÓRIO PARCIAL</option><option>ADITIVO</option><option>APOSTILAMENTO</option>
+        </select></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">OSC</label>
+        <input id="f-osc" type="text" placeholder="Nome da OSC..." class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Gestor</label>
+        <select id="f-gestor" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"><option value="">Todos</option></select></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Analista</label>
+        <select id="f-analista" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"><option value="">Todos</option></select></div>
+      <div class="grid grid-cols-2 gap-2">
+        <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">De</label>
+          <input id="f-inicio" type="date" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+        <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Até</label>
+          <input id="f-fim" type="date" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+      </div>
+    </div>
+    <div class="flex gap-2 justify-end">
+      <button onclick="filtrar()" class="px-5 py-2 bg-[#00193c] text-white rounded-lg text-xs font-bold hover:opacity-90">Filtrar</button>
+      <button onclick="limpar()" class="px-5 py-2 bg-slate-100 rounded-lg text-xs font-bold hover:bg-slate-200">Limpar</button>
     </div>
   </div>
   <!-- Tabela -->
-  <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <table class="w-full text-left">
-      <thead class="bg-slate-50">
-        <tr>
-          <th class="px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Código</th>
-          <th class="px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-400">OSC</th>
-          <th class="px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Tipo</th>
-          <th class="px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Status</th>
-          <th class="px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Gestor</th>
-          <th class="px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Analista</th>
-          <th class="px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-400 text-center">Dias Rest.</th>
-        </tr>
-      </thead>
-      <tbody id="tbody" class="divide-y divide-slate-50">
-        <tr><td colspan="7" class="px-5 py-12 text-center text-slate-400">Carregando...</td></tr>
-      </tbody>
+      <thead class="bg-slate-50 border-b border-slate-100"><tr>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Código</th>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">OSC</th>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Tipo</th>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Gestor</th>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Analista</th>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Dias Rest.</th>
+        <th class="px-5 py-2.5"></th>
+      </tr></thead>
+      <tbody id="tbody" class="divide-y divide-slate-50"><tr><td colspan="8" class="px-5 py-10 text-center text-slate-400 text-sm">Carregando...</td></tr></tbody>
     </table>
-    <div class="px-5 py-3 border-t border-slate-50 text-xs text-slate-400" id="count-text"></div>
+    <div class="px-5 py-2 border-t border-slate-100 text-xs text-slate-400" id="count"></div>
   </div>
 </main>
-
+<div id="modal-projeto" class="hidden"></div>
 <script src="/js/api.js"></script>
 <script>
-let filtrosAtivos = {};
-
-async function init() {
-  const u = await protegerRota();
-  if (!u) return;
-  montarSidebar(u, 'rel');
-  await carregar();
+let _fa={};
+async function init(){
+  const u=await protegerRota();if(!u)return;
+  if(!isMasterUser(u)){window.location.href='/index.html';return;}
+  montarSidebar(u,'rel');
+  // Popula filtros de gestor e analista
+  getUsuarios().then(lista=>{
+    const opts='<option value="">Todos</option>'+lista.map(u=>`<option value="${u.id}">${u.nome}</option>`).join('');
+    document.getElementById('f-gestor').innerHTML=opts;
+    document.getElementById('f-analista').innerHTML=opts;
+  });
+  carregar();
 }
-
-async function carregar() {
-  try {
-    const data = await API.relatorio(filtrosAtivos);
-    const t = data.totais;
-    document.getElementById('t-total').textContent = t.total;
-    document.getElementById('t-analise').textContent = t.em_analise;
-    document.getElementById('t-final').textContent = t.finalizado;
-    document.getElementById('t-atraso').textContent = t.atrasados;
+async function carregar(){
+  try{
+    const data=await API.relatorio(_fa);
+    const t=data.totais;
+    document.getElementById('t-total').textContent=t.total;
+    document.getElementById('t-analise').textContent=t.em_analise;
+    document.getElementById('t-gfcap').textContent=t.gfcap;
+    document.getElementById('t-osc').textContent=t.osc;
+    document.getElementById('t-final').textContent=t.finalizado;
+    document.getElementById('t-atraso').textContent=t.atrasados;
     renderTabela(data.projetos);
-  } catch(e) {
-    document.getElementById('tbody').innerHTML = `<tr><td colspan="7" class="px-5 py-8 text-center text-red-500">${e.message}</td></tr>`;
-  }
+  }catch(e){document.getElementById('tbody').innerHTML=`<tr><td colspan="8" class="px-5 py-8 text-center text-red-500 text-sm">${e.message}</td></tr>`;}
 }
-
-function renderTabela(lista) {
-  const tbody = document.getElementById('tbody');
-  const count = document.getElementById('count-text');
-  if (!lista.length) { tbody.innerHTML='<tr><td colspan="7" class="px-5 py-12 text-center text-slate-400">Nenhum projeto encontrado.</td></tr>'; count.textContent=''; return; }
-  const sl = {EM_ANALISE:'Em Análise',GFCAP:'GFCAP',OSC:'OSC',FINALIZADO:'Finalizado'};
-  tbody.innerHTML = lista.map(p=>`<tr class="hover:bg-slate-50 cursor-pointer" onclick="window.location='/projeto-detalhe.html?id=${p.id}'">
-    <td class="px-5 py-4 font-mono text-xs text-slate-400">${p.codigo}</td>
-    <td class="px-5 py-4 font-semibold text-sm text-[#00193c]">${p.osc_nome}</td>
-    <td class="px-5 py-4 text-xs text-slate-500">${p.tipo_demanda}</td>
-    <td class="px-5 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">${sl[p.status]||p.status}</span></td>
-    <td class="px-5 py-4 text-sm">${p.gestor||'—'}</td>
-    <td class="px-5 py-4 text-sm">${p.analista||'—'}</td>
-    <td class="px-5 py-4 text-center">
-      <span class="text-xs font-bold" style="color:${p.dias_restantes===null?'#94a3b8':p.dias_restantes>=5?'#2eac49':p.dias_restantes>=2?'#f59e0b':p.dias_restantes>0?'#ba1a1a':'#000'}">${p.dias_restantes===null?'—':p.dias_restantes}</span>
-    </td>
-  </tr>`).join('');
-  count.textContent = `${lista.length} projeto(s)`;
+function renderTabela(lista){
+  const tbody=document.getElementById('tbody'),count=document.getElementById('count');
+  if(!lista.length){tbody.innerHTML='<tr><td colspan="8" class="px-5 py-10 text-center text-slate-400 text-sm">Nenhum projeto.</td></tr>';count.textContent='';return;}
+  const sl={EM_ANALISE:'Em Análise',GFCAP:'GFCAP',OSC:'OSC',FINALIZADO:'Finalizado'};
+  tbody.innerHTML=lista.map(p=>`
+    <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.location='/projeto-detalhe.html?id=${p.id}'">
+      <td class="px-5 py-3 font-mono text-xs text-slate-400">${p.codigo}</td>
+      <td class="px-5 py-3 font-bold text-sm text-[#00193c]">${p.osc_nome}</td>
+      <td class="px-5 py-3 text-xs text-slate-500">${p.tipo_demanda}</td>
+      <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100">${sl[p.status]||p.status}</span></td>
+      <td class="px-5 py-3 text-sm">${p.gestor||'—'}</td>
+      <td class="px-5 py-3 text-sm">${p.analista||'—'}</td>
+      <td class="px-5 py-3 text-center"><span class="text-xs font-bold" style="color:${p.dias_restantes===null?'#94a3b8':p.dias_restantes>=5?'#16a34a':p.dias_restantes>=2?'#d97706':p.dias_restantes>0?'#dc2626':'#111827'}">${p.dias_restantes===null?'—':p.dias_restantes}</span></td>
+      <td class="px-5 py-3 text-right"><button onclick="event.stopPropagation();API.exportarCSVProjeto(${p.id})" class="text-xs font-bold text-[#00193c] hover:underline">Exportar</button></td>
+    </tr>`).join('');
+  count.textContent=lista.length+' projeto(s)';
 }
-
-function filtrar() {
-  filtrosAtivos = {};
+function filtrar(){
+  _fa={};
   const s=document.getElementById('f-status').value;
   const t=document.getElementById('f-tipo').value;
+  const o=document.getElementById('f-osc').value;
+  const g=document.getElementById('f-gestor').value;
+  const a=document.getElementById('f-analista').value;
   const i=document.getElementById('f-inicio').value;
   const f=document.getElementById('f-fim').value;
-  if(s) filtrosAtivos.status=s;
-  if(t) filtrosAtivos.tipo=t;
-  if(i) filtrosAtivos.periodo_inicio=i;
-  if(f) filtrosAtivos.periodo_fim=f;
+  if(s)_fa.status=s;if(t)_fa.tipo=t;if(o)_fa.osc=o;
+  if(g)_fa.gestor_id=g;if(a)_fa.analista_id=a;
+  if(i)_fa.periodo_inicio=i;if(f)_fa.periodo_fim=f;
   carregar();
 }
-
-function limpar() {
-  ['f-status','f-tipo','f-inicio','f-fim'].forEach(id=>document.getElementById(id).value='');
-  filtrosAtivos={};
-  carregar();
-}
-
-function exportar() { API.exportarCSV(filtrosAtivos); }
-
+function limpar(){['f-status','f-tipo','f-osc','f-inicio','f-fim'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-gestor').value='';document.getElementById('f-analista').value='';_fa={};carregar();}
+function exportar(){API.exportarCSV(_fa);}
 init();
 </script>
 </body></html>

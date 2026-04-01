@@ -1,111 +1,146 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+<!DOCTYPE html><html lang="pt-br"><head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Usuários — Gestão de Demandas</title>
+<title>Usuários — GFARP</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>body{font-family:'Inter',sans-serif;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle;}</style>
-</head>
-<body class="bg-slate-50 text-slate-800">
-<aside id="sidebar" class="h-screen w-64 fixed left-0 top-0 bg-slate-50 flex flex-col py-6 px-4 z-50 border-r border-slate-100"></aside>
-<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-white/90 backdrop-blur-md z-40 border-b border-slate-100 flex items-center justify-between px-8">
-  <h1 class="text-lg font-black text-[#00193c]">Usuários</h1>
-  <button onclick="abrirModal()" class="px-4 py-2 bg-[#00193c] text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:opacity-90">
+</head><body class="bg-slate-100 text-slate-800">
+<aside id="sidebar" class="h-screen w-60 fixed left-0 top-0 bg-slate-50 flex flex-col py-5 px-3 z-50 border-r border-slate-200"></aside>
+<header class="fixed top-0 right-0 w-[calc(100%-15rem)] h-14 bg-white z-40 border-b border-slate-200 flex items-center justify-between px-6">
+  <h1 class="font-black text-[#00193c]">Usuários</h1>
+  <button onclick="abrirCriar()" class="px-4 py-1.5 bg-[#00193c] text-white rounded-lg text-xs font-bold flex items-center gap-1.5 hover:opacity-90">
     <span class="material-symbols-outlined text-sm">person_add</span>Novo Usuário
   </button>
 </header>
-<main class="ml-64 pt-24 pb-12 px-8 min-h-screen">
-  <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<main class="ml-60 pt-20 pb-10 px-6 min-h-screen">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <table class="w-full text-left">
-      <thead class="bg-slate-50">
-        <tr>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Nome</th>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Email</th>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400">Perfil</th>
-          <th class="px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400 text-center">Proj. Ativos</th>
-          <th class="px-6 py-3"></th>
-        </tr>
-      </thead>
-      <tbody id="tbody" class="divide-y divide-slate-50">
-        <tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">Carregando...</td></tr>
-      </tbody>
+      <thead class="bg-slate-50 border-b border-slate-100"><tr>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Nome</th>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Email</th>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Perfil</th>
+        <th class="px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Projetos Ativos</th>
+        <th class="px-5 py-2.5"></th>
+      </tr></thead>
+      <tbody id="tbody" class="divide-y divide-slate-50"><tr><td colspan="5" class="px-5 py-10 text-center text-slate-400 text-sm">Carregando...</td></tr></tbody>
     </table>
   </div>
 </main>
 
-<div id="modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-  <div class="bg-white rounded-xl p-8 w-full max-w-md shadow-xl">
-    <h2 class="text-xl font-bold text-[#00193c] mb-6">Novo Usuário</h2>
-    <form id="form-usuario" class="space-y-4">
-      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Nome completo</label>
-        <input name="nome" type="text" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"/></div>
-      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Email</label>
-        <input name="email" type="email" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"/></div>
-      <div><label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Senha inicial</label>
-        <input name="senha" type="password" required minlength="6" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2.5 text-sm"/></div>
-      <div class="flex items-center gap-3">
-        <input name="is_master" type="checkbox" id="is_master" class="rounded"/>
-        <label for="is_master" class="text-sm text-slate-500">Administrador (acesso total)</label>
-      </div>
-      <p id="erro" class="text-red-500 text-sm"></p>
-      <div class="flex gap-3 pt-2">
-        <button type="button" onclick="fecharModal()" class="flex-1 py-3 rounded-xl border border-slate-200 text-sm font-bold">Cancelar</button>
-        <button type="submit" class="flex-1 py-3 rounded-xl bg-[#00193c] text-white text-sm font-bold hover:opacity-90">Criar</button>
+<!-- Modal Criar -->
+<div id="modal-criar" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+    <h2 class="text-lg font-bold text-[#00193c] mb-5">Novo Usuário</h2>
+    <form id="form-criar" class="space-y-3">
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nome</label>
+        <input name="nome" type="text" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Email</label>
+        <input name="email" type="email" required class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Senha</label>
+        <input name="senha" type="password" required minlength="6" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Perfil de Acesso</label>
+        <select name="papel" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm">
+          <option value="PADRAO">Padrão — acessa apenas seus projetos</option>
+          <option value="SUPERVISOR">Supervisor — acessa relatórios</option>
+          <option value="MASTER">Administrador — acesso total</option>
+        </select></div>
+      <p id="erro-criar" class="text-red-500 text-xs"></p>
+      <div class="flex gap-3 pt-1">
+        <button type="button" onclick="fecharCriar()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-bold">Cancelar</button>
+        <button type="submit" class="flex-1 py-2.5 rounded-xl bg-[#00193c] text-white text-sm font-bold hover:opacity-90">Criar</button>
       </div>
     </form>
   </div>
 </div>
 
+<!-- Modal Editar -->
+<div id="modal-editar" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+    <h2 class="text-lg font-bold text-[#00193c] mb-5">Editar Usuário</h2>
+    <form id="form-editar" class="space-y-3">
+      <input type="hidden" id="edit-id"/>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nome</label>
+        <input id="edit-nome" type="text" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Email</label>
+        <input id="edit-email" type="email" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm"/></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nova Senha (vazio = mantém)</label>
+        <input id="edit-senha" type="password" minlength="6" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm" placeholder="Opcional"/></div>
+      <div><label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Perfil de Acesso</label>
+        <select id="edit-papel" class="w-full bg-slate-50 rounded-lg border-none px-3 py-2 text-sm">
+          <option value="PADRAO">Padrão — acessa apenas seus projetos</option>
+          <option value="SUPERVISOR">Supervisor — acessa relatórios</option>
+          <option value="MASTER">Administrador — acesso total</option>
+        </select></div>
+      <p id="erro-editar" class="text-red-500 text-xs"></p>
+      <div class="flex gap-3 pt-1">
+        <button type="button" onclick="fecharEditar()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-bold">Cancelar</button>
+        <button type="submit" class="flex-1 py-2.5 rounded-xl bg-[#00193c] text-white text-sm font-bold hover:opacity-90">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-projeto" class="hidden"></div>
 <script src="/js/api.js"></script>
 <script>
-async function init() {
-  const u = await protegerRota();
-  if (!u) return;
-  if (!u.is_master) { window.location.href='/index.html'; return; }
-  montarSidebar(u, 'user');
-  await carregar();
+async function init(){
+  const u=await protegerRota();if(!u)return;
+  if(getPapel(u)!=='MASTER'){window.location.href='/index.html';return;}
+  montarSidebar(u,'user');
+  carregar();
 }
-
-async function carregar() {
-  const tbody = document.getElementById('tbody');
-  try {
-    const lista = await API.listarUsuarios();
-    if (!lista.length) { tbody.innerHTML='<tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">Nenhum usuário.</td></tr>'; return; }
-    tbody.innerHTML = lista.map(u=>`<tr class="hover:bg-slate-50">
-      <td class="px-6 py-4 font-semibold text-sm text-[#00193c]">${u.nome}</td>
-      <td class="px-6 py-4 text-sm text-slate-400">${u.email}</td>
-      <td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${u.is_master?'bg-[#00193c] text-white':'bg-slate-100 text-slate-600'}">${u.is_master?'MASTER':'PADRÃO'}</span></td>
-      <td class="px-6 py-4 text-center text-sm">
-        <span title="Analista">📋 ${u.projetos_ativos_analista||0}</span> &nbsp;
-        <span title="Gestor">👤 ${u.projetos_ativos_gestor||0}</span>
-      </td>
-      <td class="px-6 py-4 text-right">
-        <button onclick="desativar(${u.id},'${u.nome}')" class="text-xs font-bold text-red-500 hover:underline">Desativar</button>
-      </td>
-    </tr>`).join('');
-  } catch(e) { tbody.innerHTML=`<tr><td colspan="5" class="px-6 py-8 text-center text-red-500">${e.message}</td></tr>`; }
+async function carregar(){
+  const tbody=document.getElementById('tbody');
+  try{
+    const lista=await API.listarUsuarios();
+    if(!lista.length){tbody.innerHTML='<tr><td colspan="5" class="px-5 py-10 text-center text-slate-400 text-sm">Nenhum usuário.</td></tr>';return;}
+    tbody.innerHTML=lista.map(u=>{
+      const p=u.papel||'PADRAO';
+      const badge=p==='MASTER'?'bg-[#00193c] text-white':p==='SUPERVISOR'?'bg-blue-100 text-blue-700':'bg-slate-100 text-slate-600';
+      return `<tr class="hover:bg-slate-50">
+        <td class="px-5 py-3 font-semibold text-sm text-[#00193c]">${u.nome}</td>
+        <td class="px-5 py-3 text-sm text-slate-400">${u.email}</td>
+        <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-bold ${badge}">${API.papelLabel(p)}</span></td>
+        <td class="px-5 py-3 text-center text-sm"><span title="Analista">📋${u.projetos_ativos_analista||0}</span>&nbsp;<span title="Gestor">👤${u.projetos_ativos_gestor||0}</span></td>
+        <td class="px-5 py-3 text-right flex justify-end gap-3">
+          <button onclick='abrirEditar(${JSON.stringify(u)})' class="text-xs font-bold text-[#00193c] hover:underline">Editar</button>
+          <button onclick="desativar(${u.id},'${u.nome.replace(/'/g,"\\'")}')" class="text-xs font-bold text-red-500 hover:underline">Desativar</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }catch(e){tbody.innerHTML=`<tr><td colspan="5" class="px-5 py-8 text-center text-red-500 text-sm">${e.message}</td></tr>`;}
 }
-
-function abrirModal() { document.getElementById('modal').classList.remove('hidden'); document.getElementById('erro').textContent=''; document.getElementById('form-usuario').reset(); }
-function fecharModal() { document.getElementById('modal').classList.add('hidden'); }
-
-document.getElementById('form-usuario').addEventListener('submit', async e => {
+function abrirCriar(){document.getElementById('modal-criar').classList.remove('hidden');document.getElementById('erro-criar').textContent='';document.getElementById('form-criar').reset();}
+function fecharCriar(){document.getElementById('modal-criar').classList.add('hidden');}
+function fecharEditar(){document.getElementById('modal-editar').classList.add('hidden');}
+function abrirEditar(u){
+  document.getElementById('edit-id').value=u.id;
+  document.getElementById('edit-nome').value=u.nome;
+  document.getElementById('edit-email').value=u.email;
+  document.getElementById('edit-senha').value='';
+  document.getElementById('edit-papel').value=u.papel||'PADRAO';
+  document.getElementById('erro-editar').textContent='';
+  document.getElementById('modal-editar').classList.remove('hidden');
+}
+document.getElementById('form-criar').addEventListener('submit',async e=>{
   e.preventDefault();
-  const fd = new FormData(e.target);
-  try {
-    await API.criarUsuario({ nome:fd.get('nome'), email:fd.get('email'), senha:fd.get('senha'), is_master:!!fd.get('is_master') });
-    fecharModal();
-    carregar();
-  } catch(err) { document.getElementById('erro').textContent=err.message; }
+  const d=Object.fromEntries(new FormData(e.target).entries());
+  try{await API.criarUsuario(d);fecharCriar();carregar();}
+  catch(err){document.getElementById('erro-criar').textContent=err.message;}
 });
-
-async function desativar(id, nome) {
-  if (!confirm(`Desativar "${nome}"?`)) return;
-  try { await API.desativarUsuario(id); carregar(); } catch(e) { alert(e.message); }
+document.getElementById('form-editar').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const id=document.getElementById('edit-id').value;
+  const d={nome:document.getElementById('edit-nome').value,email:document.getElementById('edit-email').value,papel:document.getElementById('edit-papel').value};
+  const s=document.getElementById('edit-senha').value;if(s)d.senha=s;
+  try{await API.editarUsuario(id,d);fecharEditar();carregar();}
+  catch(err){document.getElementById('erro-editar').textContent=err.message;}
+});
+async function desativar(id,nome){
+  if(!confirm(`Desativar "${nome}"?`))return;
+  try{await API.desativarUsuario(id);carregar();}catch(e){alert(e.message);}
 }
-
 init();
 </script>
 </body></html>
